@@ -184,7 +184,8 @@ export function generateUpdatedPackageJson(): string {
 }
 
 export function getViteConfig(): string {
-  return `import { defineConfig } from 'vite';
+  return \`import { defineConfig } from 'vite';
+}
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -272,7 +273,7 @@ export function getIndexHtml(): string {
 }
 
 export function getNetlifyRedirects(): string {
-  return `# Netlify redirects for SPA routing
+  return \`# Netlify redirects for SPA routing
 /*    /index.html   200
 
 # Handle specific routes
