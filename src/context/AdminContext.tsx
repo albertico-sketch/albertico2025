@@ -4,6 +4,9 @@ import {
   generateSystemReadme, 
   generateSystemConfig, 
   generateUpdatedPackageJson,
+  generateSourceFiles
+ } from '../utils/exportHelpers';
+ import {
   getViteConfig,
   getTailwindConfig,
   getIndexHtml,
@@ -572,32 +575,100 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       const publicFolder = zip.folder('public');
       publicFolder?.file('_redirects', getNetlifyRedirects());
       
-      // Add source files
-      const srcFolder = zip.folder('src');
-      
-      // Add all component files
-      const componentsFolder = srcFolder?.folder('components');
-      const pagesFolder = srcFolder?.folder('pages');
-      const contextFolder = srcFolder?.folder('context');
-      const servicesFolder = srcFolder?.folder('services');
-      const utilsFolder = srcFolder?.folder('utils');
-      const hooksFolder = srcFolder?.folder('hooks');
-      const configFolder = srcFolder?.folder('config');
-      const typesFolder = srcFolder?.folder('types');
-
-      // Read and add all current files
-      const fileContents = {
-        'src/App.tsx': document.querySelector('[data-file="src/App.tsx"]')?.textContent || '',
-        'src/main.tsx': document.querySelector('[data-file="src/main.tsx"]')?.textContent || '',
-        'src/index.css': document.querySelector('[data-file="src/index.css"]')?.textContent || '',
-        'src/vite-env.d.ts': '/// <reference types="vite/client" />',
-      };
-
-      // Add core files
-      Object.entries(fileContents).forEach(([path, content]) => {
-        const relativePath = path.replace('src/', '');
-        srcFolder?.file(relativePath, content);
+      // Generate and add all source files with current state
+      const sourceFiles = generateSourceFiles(state);
+      Object.entries(sourceFiles).forEach(([filePath, content]) => {
+        zip.file(filePath, content);
       });
+      
+      // Add main application files
+      zip.file('src/App.tsx', \`import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
+import { AdminProvider } from './context/AdminContext';
+import { Header } from './components/Header';
+import { Home } from './pages/Home';
+import { Movies } from './pages/Movies';
+import { TVShows } from './pages/TVShows';
+import { Anime } from './pages/Anime';
+import { SearchPage } from './pages/Search';
+import { MovieDetail } from './pages/MovieDetail';
+import { TVDetail } from './pages/TVDetail';
+import { Cart } from './pages/Cart';
+import { AdminPanel } from './pages/AdminPanel';
+
+function App() {
+  return (
+    <AdminProvider>
+      <CartProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Routes>
+              <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/*" element={
+                <>
+                  <Header />
+                  <main>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/movies" element={<Movies />} />
+                      <Route path="/tv" element={<TVShows />} />
+                      <Route path="/anime" element={<Anime />} />
+                      <Route path="/search" element={<SearchPage />} />
+                      <Route path="/movie/:id" element={<MovieDetail />} />
+                      <Route path="/tv/:id" element={<TVDetail />} />
+                      <Route path="/cart" element={<Cart />} />
+                    </Routes>
+                  </main>
+                </>
+              } />
+            </Routes>
+          </div>
+        </Router>
+      </CartProvider>
+    </AdminProvider>
+  );
+}
+
+export default App;\`);
+      
+      zip.file('src/main.tsx', \`import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);\`);
+      
+      zip.file('src/index.css', \`@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Configuraciones adicionales para deshabilitar zoom */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+  
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    overflow-x: hidden;
+  }
+}\`);
+      
+      zip.file('src/vite-env.d.ts', '/// <reference types="vite/client" />');
 
       // Generate and download
       const blob = await zip.generateAsync({ type: 'blob' });

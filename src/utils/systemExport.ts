@@ -101,16 +101,12 @@ Sistema completo de TV a la Carta con panel de administración avanzado y sincro
 ## Configuración Actual del Sistema
 
 ### Precios Configurados
-- Películas: $${state.prices.moviePrice} CUP
-- Series (por temporada): $${state.prices.seriesPrice} CUP
-- Recargo transferencia: ${state.prices.transferFeePercentage}%
-- Novelas (por capítulo): $${state.prices.novelPricePerChapter} CUP
 
 ### Zonas de Entrega Configuradas
-${state.deliveryZones.map((zone: any) => `- ${zone.name}: $${zone.cost} CUP`).join('\n')}
+\${state.deliveryZones.map((zone: any) => `- \${zone.name}: $\${zone.cost} CUP`).join('\\n')}
 
 ### Novelas Administradas
-${state.novels.map((novel: any) => `- ${novel.titulo} (${novel.año}) - ${novel.capitulos} capítulos`).join('\n')}
+\${state.novels.map((novel: any) => `- \${novel.titulo} (\${novel.año}) - \${novel.capitulos} capítulos`).join('\\n')}
 
 ## Instalación
 1. Extraer el archivo ZIP
@@ -122,8 +118,7 @@ ${state.novels.map((novel: any) => `- ${novel.titulo} (${novel.año}) - ${novel.
 - Usuario: admin
 - Contraseña: admin123
 
-## Exportado el: ${new Date().toLocaleString('es-ES')}
-`;
+## Exportado el: \${new Date().toLocaleString('es-ES')}\`;
 }
 
 export function generateSystemConfig(state: any): string {
