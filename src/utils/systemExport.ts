@@ -1940,7 +1940,7 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
         <div className="overflow-y-auto max-h-[calc(95vh-120px)]">
           <div className="p-4 sm:p-6">
             {/* Order Summary */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 sm:p-6 mb-6 border border-blue-200">
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 sm:p-6 mb-6 border-2 border-blue-200">
               <div className="flex items-center mb-4">
                 <Calculator className="h-6 w-6 text-blue-600 mr-3" />
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900">Resumen del Pedido</h3>
@@ -3324,24 +3324,19 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           
           const trailers = videoData.results.filter(
             video => video.site === 'YouTube' && (video.type === 'Trailer' || video.type === 'Teaser')
-            console.warn(\\\`No videos available for \\\${isMovie ? 'movie' : 'tv'} \\\${item.id}\\\`);
+          );
           
           return { id: item.id, videos: trailers };
         } catch (error) {
-          console.warn(\\\`Error loading videos for item \\\${item.id}:\\\`, error);
+          console.warn(\`Error loading videos for item \${item.id}:\`, error);
           return { id: item.id, videos: [] };
         }
       });
 
       const results = await Promise.all(videoPromises);
       const videosMap = results.reduce((acc, result) => {
-        if (result.status === 'fulfilled') {
-          const { id, videos } = result.value;
-          acc[id] = videos;
-        }
-          const { id, videos } = result.value;
-          acc[id] = videos;
-        }
+        const { id, videos } = result;
+        acc[id] = videos;
         return acc;
       }, {} as { [key: number]: Video[] });
       
@@ -5527,7 +5522,7 @@ export function Home() {
       // Get other content, excluding items already in hero and trending
       const usedIds = new Set([
         ...heroContent.map(item => item.id),
-        ...uniqueTrending.slice(0, 12).map(item => item.id)
+        ...uniqueTrending.slice(0,12).map(item => item.id)
       ]);
       
       const [moviesRes, tvRes, animeRes] = await Promise.all([
