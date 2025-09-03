@@ -233,7 +233,7 @@ export function Cart() {
                         </div>
                         {item.paymentType === 'transfer' && (
                           <div className="text-xs text-orange-600 mt-1">
-                            +{adminContext?.state?.prices?.transferFeePercentage || 10}% incluido
+                            +10% incluido
                           </div>
                         )}
                       </div>

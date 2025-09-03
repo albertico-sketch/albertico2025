@@ -14,11 +14,6 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
     transferTotal = 0
   } = orderData;
 
-  // Get dynamic prices from the order data context
-  const moviePrice = 80; // This will be updated dynamically
-  const seriesPrice = 300; // This will be updated dynamically  
-  const transferFeePercentage = 10; // This will be updated dynamically
-
   // Formatear lista de productos
   const itemsList = items
     .map(item => {
@@ -26,9 +21,12 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
         ? `\n  📺 Temporadas: ${item.selectedSeasons.sort((a, b) => a - b).join(', ')}` 
         : '';
       const itemType = item.type === 'movie' ? 'Película' : 'Serie';
+      const moviePrice = 80; // This should be dynamic in real implementation
+      const seriesPrice = 300; // This should be dynamic in real implementation
+      const transferFeePercentage = 10; // This should be dynamic in real implementation
       const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;
       const finalPrice = item.paymentType === 'transfer' ? Math.round(basePrice * (1 + transferFeePercentage / 100)) : basePrice;
-      const paymentTypeText = item.paymentType === 'transfer' ? `Transferencia (+10%)` : 'Efectivo';
+      const paymentTypeText = item.paymentType === 'transfer' ? `Transferencia (+${transferFeePercentage}%)` : 'Efectivo';
       const emoji = item.type === 'movie' ? '🎬' : '📺';
       return `${emoji} *${item.title}*${seasonInfo}\n  📋 Tipo: ${itemType}\n  💳 Pago: ${paymentTypeText}\n  💰 Precio: $${finalPrice.toLocaleString()} CUP`;
     })
@@ -65,7 +63,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   }
   
   if (transferItems.length > 0) {
-    message += `🏦 *TRANSFERENCIA (+${Math.round(transferFeePercentage)}%):*\n`;
+    message += `🏦 *TRANSFERENCIA (+${transferFeePercentage}%):*\n`;
     transferItems.forEach(item => {
       const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;
       const finalPrice = Math.round(basePrice * (1 + transferFeePercentage / 100));
@@ -85,7 +83,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   message += `• *Subtotal Contenido: $${subtotal.toLocaleString()} CUP*\n`;
   
   if (transferFee > 0) {
-    message += `• Recargo transferencia (${Math.round(transferFeePercentage)}%): +$${transferFee.toLocaleString()} CUP\n`;
+    message += `• Recargo transferencia (${transferFeePercentage}%): +$${transferFee.toLocaleString()} CUP\n`;
   }
   
   message += `🚚 Entrega (${deliveryZone.split(' > ')[2]}): +$${deliveryCost.toLocaleString()} CUP\n`;

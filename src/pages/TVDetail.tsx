@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Calendar, Tv, Plus, X, Play, ChevronDown, Globe, Users, Building, Clock as ClockIcon, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Star, Calendar, Tv, Plus, X, Play, ChevronDown, Monitor, Rocket, Film, Clock2, Globe, Users, Building, MapPin } from 'lucide-react';
 import { tmdbService } from '../services/tmdb';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { PriceCard } from '../components/PriceCard';
@@ -49,23 +49,30 @@ export function TVDetail() {
     const fetchTVData = async () => {
       try {
         setLoading(true);
-        const [tvData, videoData, creditsData] = await Promise.all([
+        
+        // Fetch TV details and credits first
+        const [tvData, creditsData] = await Promise.all([
           tmdbService.getTVShowDetails(tvId),
-          tmdbService.getTVShowVideos(tvId),
           tmdbService.getTVShowCredits(tvId)
         ]);
 
         setTVShow(tvData);
         setCast(creditsData.cast || []);
         
-        // Filter for trailers and teasers
-        const trailers = videoData.results.filter(
-          video => video.site === 'YouTube' && (video.type === 'Trailer' || video.type === 'Teaser')
-        );
-        setVideos(trailers);
-        
-        if (trailers.length > 0) {
-          setSelectedVideo(trailers[0]);
+        // Fetch videos separately with error handling
+        try {
+          const videoData = await tmdbService.getTVShowVideos(tvId);
+          const trailers = videoData.results.filter(
+            video => video.site === 'YouTube' && (video.type === 'Trailer' || video.type === 'Teaser')
+          );
+          setVideos(trailers);
+          
+          if (trailers.length > 0) {
+            setSelectedVideo(trailers[0]);
+          }
+        } catch (videoError) {
+          console.warn(`No videos available for TV show ${tvId}`);
+          setVideos([]);
         }
       } catch (err) {
         setError('Error al cargar los detalles de la serie.');
@@ -503,7 +510,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-purple-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-purple-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Tv className="h-4 w-4 text-purple-600" />
+                      <Monitor className="h-4 w-4 text-purple-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Estado</h3>
                   </div>
@@ -513,7 +520,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-blue-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-blue-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Calendar className="h-4 w-4 text-blue-600" />
+                      <Rocket className="h-4 w-4 text-blue-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Primera Emisión</h3>
                   </div>
@@ -525,7 +532,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-green-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-green-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Tv className="h-4 w-4 text-green-600" />
+                      <Film className="h-4 w-4 text-green-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Temporadas</h3>
                   </div>
@@ -535,7 +542,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-yellow-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-yellow-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                      <Tv className="h-4 w-4 text-yellow-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Episodios</h3>
                   </div>
@@ -554,7 +561,7 @@ export function TVDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-indigo-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-indigo-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <ClockIcon className="h-4 w-4 text-indigo-600" />
+                      <Clock2 className="h-4 w-4 text-indigo-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Duración</h3>
                   </div>
@@ -612,7 +619,7 @@ export function TVDetail() {
                   <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-teal-200 transition-colors">
                     <div className="flex items-center mb-3">
                       <div className="bg-teal-100 p-2 rounded-lg mr-3 shadow-sm">
-                        <Globe className="h-4 w-4 text-teal-600" />
+                        <MapPin className="h-4 w-4 text-teal-600" />
                       </div>
                       <h3 className="font-semibold text-gray-900">Países</h3>
                     </div>
