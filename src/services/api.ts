@@ -21,10 +21,14 @@ export class APIService {
       const response = await fetch(`${BASE_URL}${endpoint}`, API_OPTIONS);
       
       if (!response.ok) {
-        // Handle 404 errors gracefully for video endpoints
-        if (response.status === 404 && endpoint.includes('/videos')) {
+        // Handle 404 errors gracefully for video endpoints and missing content
+        if (response.status === 404 && (endpoint.includes('/videos') || endpoint.includes('/credits'))) {
           console.warn(`Videos not found for endpoint: ${endpoint}`);
-          return { results: [] } as T;
+          if (endpoint.includes('/videos')) {
+            return { results: [] } as T;
+          } else if (endpoint.includes('/credits')) {
+            return { cast: [], crew: [] } as T;
+          }
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -39,10 +43,14 @@ export class APIService {
     } catch (error) {
       console.error(`API Error for ${endpoint}:`, error);
       
-      // Handle video endpoints specifically
-      if (endpoint.includes('/videos')) {
+      // Handle video and credits endpoints specifically
+      if (endpoint.includes('/videos') || endpoint.includes('/credits')) {
         console.warn(`Returning empty videos for ${endpoint}`);
-        return { results: [] } as T;
+        if (endpoint.includes('/videos')) {
+          return { results: [] } as T;
+        } else if (endpoint.includes('/credits')) {
+          return { cast: [], crew: [] } as T;
+        }
       }
       
       // Return cached data if available, even if expired

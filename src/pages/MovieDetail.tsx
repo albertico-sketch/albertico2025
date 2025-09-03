@@ -34,14 +34,18 @@ export function MovieDetail() {
       try {
         setLoading(true);
         
-        // Fetch movie details and credits first
-        const [movieData, creditsData] = await Promise.all([
-          tmdbService.getMovieDetails(movieId),
-          tmdbService.getMovieCredits(movieId)
-        ]);
-
+        // Fetch movie details first
+        const movieData = await tmdbService.getMovieDetails(movieId);
         setMovie(movieData);
-        setCast(creditsData.cast || []);
+
+        // Fetch credits separately with error handling
+        try {
+          const creditsData = await tmdbService.getMovieCredits(movieId);
+          setCast(creditsData.cast || []);
+        } catch (creditsError) {
+          console.warn(`No credits available for movie ${movieId}`);
+          setCast([]);
+        }
         
         // Fetch videos separately with error handling
         try {
@@ -59,7 +63,11 @@ export function MovieDetail() {
           setVideos([]);
         }
       } catch (err) {
-        setError('Error al cargar los detalles de la película.');
+        if (err instanceof Error && err.message.includes('404')) {
+          setError('Película no encontrada. Es posible que haya sido eliminada o no esté disponible.');
+        } else {
+          setError('Error al cargar los detalles de la película.');
+        }
         console.error('Error fetching movie details:', err);
       } finally {
         setLoading(false);

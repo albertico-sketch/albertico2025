@@ -50,14 +50,18 @@ export function TVDetail() {
       try {
         setLoading(true);
         
-        // Fetch TV details and credits first
-        const [tvData, creditsData] = await Promise.all([
-          tmdbService.getTVShowDetails(tvId),
-          tmdbService.getTVShowCredits(tvId)
-        ]);
-
+        // Fetch TV details first
+        const tvData = await tmdbService.getTVShowDetails(tvId);
         setTVShow(tvData);
-        setCast(creditsData.cast || []);
+
+        // Fetch credits separately with error handling
+        try {
+          const creditsData = await tmdbService.getTVShowCredits(tvId);
+          setCast(creditsData.cast || []);
+        } catch (creditsError) {
+          console.warn(`No credits available for TV show ${tvId}`);
+          setCast([]);
+        }
         
         // Fetch videos separately with error handling
         try {
@@ -75,7 +79,11 @@ export function TVDetail() {
           setVideos([]);
         }
       } catch (err) {
-        setError('Error al cargar los detalles de la serie.');
+        if (err instanceof Error && err.message.includes('404')) {
+          setError('Serie no encontrada. Es posible que haya sido eliminada o no esté disponible.');
+        } else {
+          setError('Error al cargar los detalles de la serie.');
+        }
         console.error('Error fetching TV show details:', err);
       } finally {
         setLoading(false);
