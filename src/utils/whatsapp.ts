@@ -21,9 +21,9 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
         ? `\n  📺 Temporadas: ${item.selectedSeasons.sort((a, b) => a - b).join(', ')}` 
         : '';
       const itemType = item.type === 'movie' ? 'Película' : 'Serie';
-      const moviePrice = 80;
-      const seriesPrice = 300;
-      const transferFeePercentage = 10;
+      const moviePrice = 80; // This should be dynamic in real implementation
+      const seriesPrice = 300; // This should be dynamic in real implementation
+      const transferFeePercentage = 10; // This should be dynamic in real implementation
       const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;
       const finalPrice = item.paymentType === 'transfer' ? Math.round(basePrice * (1 + transferFeePercentage / 100)) : basePrice;
       const paymentTypeText = item.paymentType === 'transfer' ? `Transferencia (+${transferFeePercentage}%)` : 'Efectivo';
@@ -63,11 +63,8 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   }
   
   if (transferItems.length > 0) {
-    const transferFeePercentage = 10;
     message += `🏦 *TRANSFERENCIA (+${transferFeePercentage}%):*\n`;
     transferItems.forEach(item => {
-      const moviePrice = 80;
-      const seriesPrice = 300;
       const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;
       const finalPrice = Math.round(basePrice * (1 + transferFeePercentage / 100));
       const emoji = item.type === 'movie' ? '🎬' : '📺';
@@ -86,7 +83,7 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   message += `• *Subtotal Contenido: $${subtotal.toLocaleString()} CUP*\n`;
   
   if (transferFee > 0) {
-    message += `• Recargo transferencia (10%): +$${transferFee.toLocaleString()} CUP\n`;
+    message += `• Recargo transferencia (${transferFeePercentage}%): +$${transferFee.toLocaleString()} CUP\n`;
   }
   
   message += `🚚 Entrega (${deliveryZone.split(' > ')[2]}): +$${deliveryCost.toLocaleString()} CUP\n`;
