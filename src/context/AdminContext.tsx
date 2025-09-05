@@ -156,7 +156,7 @@ const initialState: AdminState = {
 function adminReducer(state: AdminState, action: AdminAction): AdminState {
   switch (action.type) {
     case 'LOGIN':
-      if (action.payload.username === 'admin' && action.payload.password === 'admin123') {
+      if (action.payload.username === 'admin' && action.payload.password === 'tvalacarta2024') {
         return { ...state, isAuthenticated: true };
       }
       return state;
@@ -479,7 +479,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   // Context methods implementation
   const login = (username: string, password: string): boolean => {
     dispatch({ type: 'LOGIN', payload: { username, password } });
-    const success = username === 'admin' && password === 'admin123';
+    const success = username === 'admin' && password === 'tvalacarta2024';
     if (success) {
       addNotification({
         type: 'success',
