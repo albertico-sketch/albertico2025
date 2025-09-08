@@ -118,15 +118,15 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
   message += `• *Subtotal Contenido: $${subtotal.toLocaleString()} CUP*\n`;
   
   if (transferFee > 0) {
-    message += `• Recargo transferencia (${transferFeePercentage}%): +$${transferFee.toLocaleString()} CUP\n`;
+    message += `• Recargo transferencia (${transferFeePercentage}%): +${transferFee.toLocaleString()} CUP\n`;
   }
   
-  message += `🚚 Entrega (${deliveryZone.split(' > ')[2]}): +$${deliveryCost.toLocaleString()} CUP\n`;
-  message += `\n🎯 *TOTAL FINAL: $${total.toLocaleString()} CUP*\n\n`;
+  message += `🚚 Entrega (${deliveryZone.split(' > ')[2]}): +${deliveryCost.toLocaleString()} CUP\n`;
+  message += `\n🎯 *TOTAL FINAL: ${total.toLocaleString()} CUP*\n\n`;
   
   message += `📍 *ZONA DE ENTREGA:*\n`;
   message += `${deliveryZone.replace(' > ', ' → ')}\n`;
-  message += `💰 Costo de entrega: $${deliveryCost.toLocaleString()} CUP\n\n`;
+  message += `💰 Costo de entrega: ${deliveryCost.toLocaleString()} CUP\n\n`;
   
   message += `📊 *ESTADÍSTICAS DEL PEDIDO:*\n`;
   message += `• Total de elementos: ${items.length}\n`;
@@ -146,15 +146,15 @@ export function sendOrderToWhatsApp(orderData: OrderData): void {
     message += `• Costo de entrega: GRATIS\n`;
   } else if (deliveryCost > 0) {
     message += `• Modalidad: Entrega a domicilio\n`;
-    message += `• Costo de entrega: $${deliveryCost.toLocaleString()} CUP\n`;
+    message += `• Costo de entrega: ${deliveryCost.toLocaleString()} CUP\n`;
   } else {
     message += `• Modalidad: Entrega gratuita\n`;
   }
   message += `\n`;
   
   message += `💼 *CONFIGURACIÓN DE PRECIOS APLICADA:*\n`;
-  message += `• Películas: $${currentPrices.moviePrice.toLocaleString()} CUP\n`;
-  message += `• Series: $${currentPrices.seriesPrice.toLocaleString()} CUP por temporada\n`;
+  message += `• Películas: ${currentPrices.moviePrice.toLocaleString()} CUP\n`;
+  message += `• Series: ${currentPrices.seriesPrice.toLocaleString()} CUP por temporada\n`;
   message += `• Recargo transferencia: ${transferFeePercentage}%\n\n`;
   
   message += `📱 *Enviado desde:* TV a la Carta App\n`;
