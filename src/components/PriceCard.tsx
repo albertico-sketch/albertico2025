@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, Tv, Film, Star, CreditCard } from 'lucide-react';
+import { DollarSign, Tv, Film, Star, CreditCard, Banknote, Smartphone } from 'lucide-react';
 
 // PRECIOS EMBEBIDOS - Generados automáticamente
 const EMBEDDED_PRICES = {
@@ -76,12 +76,12 @@ export function PriceCard({ type, selectedSeasons = [], episodeCount = 0, isAnim
           <div className="flex items-center justify-between mb-1">
             <span className="text-sm font-bold text-green-700 flex items-center">
               <div className="bg-green-100 p-1 rounded-lg mr-2">
-                <DollarSign className="h-4 w-4" />
+                <Banknote className="h-4 w-4" />
               </div>
               Efectivo
             </span>
             <span className="text-xl font-black text-green-700">
-              $${price.toLocaleString()} CUP
+              ${price.toLocaleString()} CUP
             </span>
           </div>
         </div>
@@ -91,22 +91,22 @@ export function PriceCard({ type, selectedSeasons = [], episodeCount = 0, isAnim
           <div className="flex items-center justify-between mb-1">
             <span className="text-sm font-bold text-orange-700 flex items-center">
               <div className="bg-orange-100 p-1 rounded-lg mr-2">
-                <CreditCard className="h-4 w-4" />
+                <Smartphone className="h-4 w-4" />
               </div>
               Transferencia
             </span>
             <span className="text-xl font-black text-orange-700">
-              $${transferPrice.toLocaleString()} CUP
+              ${transferPrice.toLocaleString()} CUP
             </span>
           </div>
           <div className="text-sm text-orange-600 font-semibold bg-orange-100 px-2 py-1 rounded-full text-center">
-            +${transferFeePercentage}% recargo bancario
+            +{transferFeePercentage}% recargo bancario
           </div>
         </div>
         
         {type === 'tv' && selectedSeasons.length > 0 && (
           <div className="text-sm text-green-600 font-bold text-center bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-3 border border-green-200">
-            $${(price / selectedSeasons.length).toLocaleString()} CUP por temporada (efectivo)
+            ${(price / selectedSeasons.length).toLocaleString()} CUP por temporada (efectivo)
           </div>
         )}
       </div>
