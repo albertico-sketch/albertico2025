@@ -363,7 +363,7 @@ export function TVDetail() {
                       <span className="text-sm font-semibold">Información Importante</span>
                     </div>
                     <p className="text-xs text-yellow-100 leading-relaxed">
-                      Esta serie tiene {tvShow.number_of_episodes} episodios. Hasta 50 episodios se contempla como una temporada (${seriesPrice} CUP). 
+                      Esta serie tiene {tvShow.number_of_episodes} episodios. Hasta 50 episodios se contempla como una temporada y tiene un costo de: (${seriesPrice} CUP). 
                       Para más episodios, contacte con TV a la Carta para información adicional.
                     </p>
                   </div>
