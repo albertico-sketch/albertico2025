@@ -100,7 +100,6 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
     'Entrega en Local > TV a la Carta > Local TV a la Carta': 0
   };
   const deliveryCost = allZones[deliveryZone as keyof typeof allZones] || 0;
-  const finalTotal = total + deliveryCost;
   const isLocalPickup = deliveryZone === 'Entrega en Local > TV a la Carta > Local TV a la Carta';
 
   // Get current transfer fee percentage from embedded prices
@@ -378,6 +377,13 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
 
   if (!isOpen) return null;
 
+  const finalTotal = total + deliveryCost + (items.filter(item => item.paymentType === 'transfer').reduce((sum, item) => {
+    const moviePrice = EMBEDDED_PRICES.moviePrice;
+    const seriesPrice = EMBEDDED_PRICES.seriesPrice;
+    const basePrice = item.type === 'movie' ? moviePrice : (item.selectedSeasons?.length || 1) * seriesPrice;
+    return sum + Math.round(basePrice * transferFeePercentage / 100);
+  }, 0));
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[95vh] overflow-hidden shadow-2xl">
@@ -651,135 +657,4 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                                 )}
                                 
                                 {distanceInfo.walking?.status === 'OK' && (
-                                  <div className="flex items-center justify-between text-xs">
-                                    <div className="flex items-center">
-                                      <span className="text-gray-600 mr-2">🚶</span>
-                                      <span>Caminando:</span>
-                                    </div>
-                                    <span className="font-medium">{distanceInfo.walking.distance} • {distanceInfo.walking.duration}</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            
-                            {!isCalculatingDistance && !distanceInfo.driving && !distanceInfo.walking && !distanceInfo.bicycling && (
-                              <p className="text-xs text-gray-500 ml-6">
-                                Ingrese su dirección completa para calcular distancia y tiempo estimado
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-medium"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleGenerateOrder}
-                    disabled={!isFormValid || deliveryZone === 'Por favor seleccionar su Barrio/Zona'}
-                    className={`flex-1 px-6 py-4 rounded-xl transition-all font-medium ${
-                      isFormValid && deliveryZone !== 'Por favor seleccionar su Barrio/Zona'
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    Generar Orden
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isProcessing || !isFormValid || deliveryZone === 'Por favor seleccionar su Barrio/Zona'}
-                    className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-all font-medium flex items-center justify-center"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                        Procesando...
-                      </>
-                    ) : (
-                      <>
-                        <MessageCircle className="h-5 w-5 mr-2" />
-                        Enviar por WhatsApp
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              /* Generated Order Display */
-              <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center">
-                    <Check className="h-6 w-6 text-green-600 mr-3" />
-                    Orden Generada
-                  </h3>
-                  <button
-                    onClick={handleCopyOrder}
-                    className={`px-4 py-2 rounded-xl font-medium transition-all flex items-center justify-center ${
-                      copied
-                        ? 'bg-green-100 text-green-700 border border-green-300'
-                        : 'bg-blue-100 text-blue-700 border border-blue-300 hover:bg-blue-200'
-                    }`}
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="h-4 w-4 mr-2" />
-                        ¡Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copiar Orden
-                      </>
-                    )}
-                  </button>
-                </div>
-                
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 max-h-96 overflow-y-auto">
-                  <pre className="text-xs sm:text-sm text-gray-800 whitespace-pre-wrap font-mono leading-relaxed">
-                    {generatedOrder}
-                  </pre>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                  <button
-                    onClick={() => setOrderGenerated(false)}
-                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-medium"
-                  >
-                    Volver a Editar
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={isProcessing || !isFormValid}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 disabled:opacity-50 text-white rounded-xl transition-all font-medium flex items-center justify-center"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <MessageCircle className="h-5 w-5 mr-2" />
-                        Enviar por WhatsApp
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+                                  
