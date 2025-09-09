@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Download, MessageCircle, Phone, BookOpen, Info, Check, DollarSign, CreditCard, Calculator, Search, Filter, SortAsc, SortDesc, Smartphone } from 'lucide-react';
-
-// CATÁLOGO DE NOVELAS EMBEBIDO - Generado automáticamente
-const EMBEDDED_NOVELS = [];
-
-// PRECIOS EMBEBIDOS
-const EMBEDDED_PRICES = {
-  "moviePrice": 80,
-  "seriesPrice": 300,
-  "transferFeePercentage": 10,
-  "novelPricePerChapter": 5
-};
+import { useAdmin } from '../context/AdminContext';
 
 interface Novela {
   id: number;
@@ -28,6 +18,7 @@ interface NovelasModalProps {
 }
 
 export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
+  const { state } = useAdmin();
   const [selectedNovelas, setSelectedNovelas] = useState<number[]>([]);
   const [novelasWithPayment, setNovelasWithPayment] = useState<Novela[]>([]);
   const [showNovelList, setShowNovelList] = useState(false);
@@ -37,15 +28,13 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
   const [sortBy, setSortBy] = useState<'titulo' | 'año' | 'capitulos'>('titulo');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  // Get novels and prices from embedded configuration
-  const adminNovels = EMBEDDED_NOVELS;
-  const novelPricePerChapter = EMBEDDED_PRICES.novelPricePerChapter;
-  const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
+  // Get novels and prices from admin context (real-time sync)
+  const adminNovels = state.novels;
+  const novelPricePerChapter = state.prices.novelPricePerChapter;
+  const transferFeePercentage = state.prices.transferFeePercentage;
   
   // Base novels list
-  const defaultNovelas: Novela[] = [
-    
-  ];
+  const defaultNovelas: Novela[] = [];
 
   // Combine admin novels with default novels
   const allNovelas = [...defaultNovelas, ...adminNovels.map(novel => ({
@@ -98,14 +87,14 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
 
   const filteredNovelas = getFilteredNovelas();
 
-  // Initialize novels with default payment type
+  // Initialize novels with default payment type and sync with admin changes
   useEffect(() => {
     const novelasWithDefaultPayment = allNovelas.map(novela => ({
       ...novela,
       paymentType: 'cash' as const
     }));
     setNovelasWithPayment(novelasWithDefaultPayment);
-  }, []);
+  }, [state.novels]); // Re-sync when admin novels change
 
   const handleNovelToggle = (novelaId: number) => {
     setSelectedNovelas(prev => {
@@ -143,7 +132,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
     setSortOrder('asc');
   };
 
-  // Calculate totals by payment type with embedded pricing
+  // Calculate totals by payment type with real-time pricing
   const calculateTotals = () => {
     const selectedNovelasData = novelasWithPayment.filter(n => selectedNovelas.includes(n.id));
     
@@ -519,7 +508,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                   
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
                     <div className="text-sm text-purple-700">
-                      Mostrando ${filteredNovelas.length} de ${allNovelas.length} novelas
+                      Mostrando {filteredNovelas.length} de {allNovelas.length} novelas
                       {(searchTerm || selectedGenre || selectedYear) && (
                         <span className="ml-2 text-purple-600">• Filtros activos</span>
                       )}
@@ -539,7 +528,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                 <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-4 border-b border-gray-200">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
                     <h4 className="text-lg font-bold text-gray-900">
-                      Seleccionar Novelas (${selectedNovelas.length} seleccionadas)
+                      Seleccionar Novelas ({selectedNovelas.length} seleccionadas)
                     </h4>
                     <div className="flex space-x-2">
                       <button
@@ -568,19 +557,19 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
-                        <div className="text-2xl font-bold text-purple-600">${selectedNovelas.length}</div>
+                        <div className="text-2xl font-bold text-purple-600">{selectedNovelas.length}</div>
                         <div className="text-sm text-gray-600">Novelas</div>
                       </div>
                       <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
-                        <div className="text-2xl font-bold text-blue-600">${totals.totalCapitulos}</div>
+                        <div className="text-2xl font-bold text-blue-600">{totals.totalCapitulos}</div>
                         <div className="text-sm text-gray-600">Capítulos</div>
                       </div>
                       <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
-                        <div className="text-2xl font-bold text-green-600">$${totals.cashTotal.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-green-600">${totals.cashTotal.toLocaleString()}</div>
                         <div className="text-sm text-gray-600">Efectivo</div>
                       </div>
                       <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
-                        <div className="text-2xl font-bold text-orange-600">$${totals.transferTotal.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-orange-600">${totals.transferTotal.toLocaleString()}</div>
                         <div className="text-sm text-gray-600">Transferencia</div>
                       </div>
                     </div>
@@ -588,11 +577,11 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                     <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-4 border-2 border-green-300">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-bold text-gray-900">TOTAL A PAGAR:</span>
-                        <span className="text-2xl font-bold text-green-600">$${totals.grandTotal.toLocaleString()} CUP</span>
+                        <span className="text-2xl font-bold text-green-600">${totals.grandTotal.toLocaleString()} CUP</span>
                       </div>
                       {totals.transferFee > 0 && (
                         <div className="text-sm text-orange-600 mt-2">
-                          Incluye $${totals.transferFee.toLocaleString()} CUP de recargo por transferencia (${transferFeePercentage}%)
+                          Incluye ${totals.transferFee.toLocaleString()} CUP de recargo por transferencia ({transferFeePercentage}%)
                         </div>
                       )}
                     </div>
@@ -603,100 +592,100 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                   <div className="grid grid-cols-1 gap-3">
                     {filteredNovelas.length > 0 ? (
                       filteredNovelas.map((novela) => {
-                      const isSelected = selectedNovelas.includes(novela.id);
-                      const baseCost = novela.capitulos * novelPricePerChapter;
-                      const transferCost = Math.round(baseCost * (1 + transferFeePercentage / 100));
-                      const finalCost = novela.paymentType === 'transfer' ? transferCost : baseCost;
-                      
-                      return (
-                        <div
-                          key={novela.id}
-                          className={`p-4 rounded-xl border transition-all ${
-                            isSelected 
-                              ? 'bg-purple-50 border-purple-300 shadow-md' 
-                              : 'bg-gray-50 border-gray-200 hover:bg-purple-25 hover:border-purple-200'
-                          }`}
-                        >
-                          <div className="flex items-start space-x-4">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => handleNovelToggle(novela.id)}
-                              className="mt-1 h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                            />
-                            
-                            <div className="flex-1">
-                              <div className="flex flex-col sm:flex-row sm:items-start justify-between space-y-3 sm:space-y-0">
-                                <div className="flex-1">
-                                  <p className="font-semibold text-gray-900 mb-2">${novela.titulo}</p>
-                                  <div className="flex flex-wrap gap-2 text-sm text-gray-600 mb-3">
-                                    <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
-                                      ${novela.genero}
-                                    </span>
-                                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                                      ${novela.capitulos} capítulos
-                                    </span>
-                                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                                      ${novela.año}
-                                    </span>
+                        const isSelected = selectedNovelas.includes(novela.id);
+                        const baseCost = novela.capitulos * novelPricePerChapter;
+                        const transferCost = Math.round(baseCost * (1 + transferFeePercentage / 100));
+                        const finalCost = novela.paymentType === 'transfer' ? transferCost : baseCost;
+                        
+                        return (
+                          <div
+                            key={novela.id}
+                            className={`p-4 rounded-xl border transition-all ${
+                              isSelected 
+                                ? 'bg-purple-50 border-purple-300 shadow-md' 
+                                : 'bg-gray-50 border-gray-200 hover:bg-purple-25 hover:border-purple-200'
+                            }`}
+                          >
+                            <div className="flex items-start space-x-4">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => handleNovelToggle(novela.id)}
+                                className="mt-1 h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                              />
+                              
+                              <div className="flex-1">
+                                <div className="flex flex-col sm:flex-row sm:items-start justify-between space-y-3 sm:space-y-0">
+                                  <div className="flex-1">
+                                    <p className="font-semibold text-gray-900 mb-2">{novela.titulo}</p>
+                                    <div className="flex flex-wrap gap-2 text-sm text-gray-600 mb-3">
+                                      <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                                        {novela.genero}
+                                      </span>
+                                      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                        {novela.capitulos} capítulos
+                                      </span>
+                                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                                        {novela.año}
+                                      </span>
+                                    </div>
+                                    
+                                    {/* Payment type selector */}
+                                    <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                      <span className="text-sm font-medium text-gray-700">Tipo de pago:</span>
+                                      <div className="flex space-x-2">
+                                        <button
+                                          onClick={() => handlePaymentTypeChange(novela.id, 'cash')}
+                                          className={`px-3 py-2 rounded-full text-xs font-medium transition-colors ${
+                                            novela.paymentType === 'cash'
+                                              ? 'bg-green-500 text-white'
+                                              : 'bg-gray-200 text-gray-600 hover:bg-green-100'
+                                          }`}
+                                        >
+                                          <DollarSign className="h-3 w-3 inline mr-1" />
+                                          Efectivo
+                                        </button>
+                                        <button
+                                          onClick={() => handlePaymentTypeChange(novela.id, 'transfer')}
+                                          className={`px-3 py-2 rounded-full text-xs font-medium transition-colors ${
+                                            novela.paymentType === 'transfer'
+                                              ? 'bg-orange-500 text-white'
+                                              : 'bg-gray-200 text-gray-600 hover:bg-orange-100'
+                                          }`}
+                                        >
+                                          <CreditCard className="h-3 w-3 inline mr-1" />
+                                          Transferencia (+{transferFeePercentage}%)
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                   
-                                  {/* Payment type selector */}
-                                  <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                                    <span className="text-sm font-medium text-gray-700">Tipo de pago:</span>
-                                    <div className="flex space-x-2">
-                                      <button
-                                        onClick={() => handlePaymentTypeChange(novela.id, 'cash')}
-                                        className={`px-3 py-2 rounded-full text-xs font-medium transition-colors ${
-                                          novela.paymentType === 'cash'
-                                            ? 'bg-green-500 text-white'
-                                            : 'bg-gray-200 text-gray-600 hover:bg-green-100'
-                                        }`}
-                                      >
-                                        <DollarSign className="h-3 w-3 inline mr-1" />
-                                        Efectivo
-                                      </button>
-                                      <button
-                                        onClick={() => handlePaymentTypeChange(novela.id, 'transfer')}
-                                        className={`px-3 py-2 rounded-full text-xs font-medium transition-colors ${
-                                          novela.paymentType === 'transfer'
-                                            ? 'bg-orange-500 text-white'
-                                            : 'bg-gray-200 text-gray-600 hover:bg-orange-100'
-                                        }`}
-                                      >
-                                        <CreditCard className="h-3 w-3 inline mr-1" />
-                                        Transferencia (+${transferFeePercentage}%)
-                                      </button>
+                                  <div className="text-right sm:ml-4">
+                                    <div className={`text-lg font-bold ${
+                                      novela.paymentType === 'cash' ? 'text-green-600' : 'text-orange-600'
+                                    }`}>
+                                      ${finalCost.toLocaleString()} CUP
                                     </div>
-                                  </div>
-                                </div>
-                                
-                                <div className="text-right sm:ml-4">
-                                  <div className={`text-lg font-bold ${
-                                    novela.paymentType === 'cash' ? 'text-green-600' : 'text-orange-600'
-                                  }`}>
-                                    $${finalCost.toLocaleString()} CUP
-                                  </div>
-                                  {novela.paymentType === 'transfer' && (
-                                    <div className="text-xs text-gray-500">
-                                      Base: $${baseCost.toLocaleString()} CUP
-                                      <br />
-                                      Recargo: +$${(transferCost - baseCost).toLocaleString()} CUP
+                                    {novela.paymentType === 'transfer' && (
+                                      <div className="text-xs text-gray-500">
+                                        Base: ${baseCost.toLocaleString()} CUP
+                                        <br />
+                                        Recargo: +${(transferCost - baseCost).toLocaleString()} CUP
+                                      </div>
+                                    )}
+                                    <div className="text-xs text-gray-500 mt-1">
+                                      ${novelPricePerChapter} CUP × {novela.capitulos} cap.
                                     </div>
-                                  )}
-                                  <div className="text-xs text-gray-500 mt-1">
-                                    $${novelPricePerChapter} CUP × ${novela.capitulos} cap.
                                   </div>
                                 </div>
                               </div>
+                              
+                              {isSelected && (
+                                <Check className="h-5 w-5 text-purple-600 mt-1" />
+                              )}
                             </div>
-                            
-                            {isSelected && (
-                              <Check className="h-5 w-5 text-purple-600 mt-1" />
-                            )}
                           </div>
-                        </div>
-                      );
+                        );
                       })
                     ) : (
                       <div className="text-center py-8">
@@ -723,10 +712,10 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
                       <div className="text-center sm:text-left">
                         <p className="font-semibold text-gray-900">
-                          ${selectedNovelas.length} novelas seleccionadas
+                          {selectedNovelas.length} novelas seleccionadas
                         </p>
                         <p className="text-sm text-gray-600">
-                          Total: $${totals.grandTotal.toLocaleString()} CUP
+                          Total: ${totals.grandTotal.toLocaleString()} CUP
                         </p>
                       </div>
                       <button
