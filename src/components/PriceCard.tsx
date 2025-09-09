@@ -1,7 +1,13 @@
 import React from 'react';
 import { DollarSign, Tv, Film, Star, CreditCard } from 'lucide-react';
-import { useAdmin } from '../context/AdminContext';
 
+// PRECIOS EMBEBIDOS - Generados automáticamente
+const EMBEDDED_PRICES = {
+  "moviePrice": 80,
+  "seriesPrice": 300,
+  "transferFeePercentage": 10,
+  "novelPricePerChapter": 5
+};
 
 interface PriceCardProps {
   type: 'movie' | 'tv';
@@ -11,11 +17,10 @@ interface PriceCardProps {
 }
 
 export function PriceCard({ type, selectedSeasons = [], episodeCount = 0, isAnime = false }: PriceCardProps) {
-  // Use real-time prices from admin context
-  const { state } = useAdmin();
-  const moviePrice = state.prices.moviePrice;
-  const seriesPrice = state.prices.seriesPrice;
-  const transferFeePercentage = state.prices.transferFeePercentage;
+  // Use embedded prices
+  const moviePrice = EMBEDDED_PRICES.moviePrice;
+  const seriesPrice = EMBEDDED_PRICES.seriesPrice;
+  const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
   
   const calculatePrice = () => {
     if (type === 'movie') {
