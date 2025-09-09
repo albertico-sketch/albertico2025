@@ -423,19 +423,19 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                     <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">
                       ${total.toLocaleString()} CUP
                     </div>
-                    <div className="text-sm text-gray-600">Subtotal Contenido</div>
+                    ${total.toLocaleString()} CUP
                     <div className="text-xs text-gray-500 mt-1">{items.length} elementos</div>
                   </div>
-                </div>
+                  <div className="text-xs text-gray-500 mt-1">{items.length} elementos</div>
                 <div className="bg-white rounded-xl p-4 border border-gray-200">
                   <div className="text-center">
                     <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">
                       ${deliveryCost.toLocaleString()} CUP
-                    </div>
+                    ${deliveryCost.toLocaleString()} CUP
                     <div className="text-sm text-gray-600">Costo de Entrega</div>
                     <div className="text-xs text-gray-500 mt-1">
                       {deliveryZone.split(' > ')[2] || 'Seleccionar zona'}
-                    </div>
+                    {deliveryZone.split(' > ')[2] || 'Seleccionar zona'}
                   </div>
                 </div>
               </div>
