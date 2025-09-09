@@ -97,11 +97,11 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
   const allZones = { 
     ...BASE_DELIVERY_ZONES, 
     ...embeddedZonesMap,
-    'Entrega en Local > TV a la Carta > Reparto Nuevo Vista Alegre': 0
+    'Entrega en Local > TV a la Carta > Local TV a la Carta': 0
   };
   const deliveryCost = allZones[deliveryZone as keyof typeof allZones] || 0;
   const finalTotal = total + deliveryCost;
-  const isLocalPickup = deliveryZone === 'Entrega en Local > TV a la Carta > Reparto Nuevo Vista Alegre';
+  const isLocalPickup = deliveryZone === 'Entrega en Local > TV a la Carta > Local TV a la Carta';
 
   // Get current transfer fee percentage from embedded prices
   const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
@@ -505,15 +505,15 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                     <MapPin className="h-5 w-5 mr-3 text-green-600" />
                     Zona de Entrega
                   </h3>
-                  
+                      <div className="text-2xl font-bold text-blue-600">${totals.totalCapitulos}</div>
                   <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 mb-4 border border-green-200">
                     <div className="flex items-center mb-2">
                       <div className="bg-green-100 p-2 rounded-lg mr-3">
-                        <span className="text-sm">📍</span>
+                      <div className="text-2xl font-bold text-green-600">${totals.cashTotal.toLocaleString()}</div>
                       </div>
                       <h4 className="font-semibold text-green-900">Información de Entrega</h4>
                     </div>
-                    <p className="text-sm text-green-700 ml-11">
+                      <div className="text-2xl font-bold text-orange-600">${totals.transferTotal.toLocaleString()}</div>
                       Seleccione su zona para calcular el costo de entrega. Los precios pueden variar según la distancia.
                     </p>
                   </div>
@@ -553,16 +553,16 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                       </div>
                     )}
                     
-                    {deliveryCost > 0 && (
+                          ${itemPrice.toLocaleString()} CUP
                       <div className="mt-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
-                            <div className="bg-green-100 p-2 rounded-lg mr-3">
+                            Base: ${basePrice.toLocaleString()} CUP
                               <span className="text-sm">🚚</span>
                             </div>
                             <span className="text-sm font-semibold text-green-800">
                               Costo de entrega confirmado:
-                            </span>
+                            ${Math.round(itemPrice / item.selectedSeasons.length).toLocaleString()} CUP/temp.
                           </div>
                           <div className="bg-white rounded-lg px-3 py-2 border border-green-300">
                             <span className="text-lg font-bold text-green-600">
@@ -665,12 +665,12 @@ export function CheckoutModal({ isOpen, onClose, onCheckout, items, total }: Che
                             
                             {!isCalculatingDistance && !distanceInfo.driving && !distanceInfo.walking && !distanceInfo.bicycling && (
                               <p className="text-xs text-gray-500 ml-6">
-                                Ingrese su dirección completa para calcular distancia y tiempo estimado
+                      <span className="text-2xl font-bold text-green-600">${totals.grandTotal.toLocaleString()} CUP</span>
                               </p>
-                            )}
+                      ${selectedNovelas.length} novelas seleccionadas
                           </div>
-                        )}
-                      </div>
+                        Incluye ${totals.transferFee.toLocaleString()} CUP de recargo por transferencia (${transferFeePercentage}%)
+                      Total: ${totals.grandTotal.toLocaleString()} CUP
                     )}
                   </div>
                 </div>
