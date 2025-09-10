@@ -8,11 +8,13 @@ import { CastSection } from '../components/CastSection';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useCart } from '../context/CartContext';
+import { useAdmin } from '../context/AdminContext';
 import { IMAGE_BASE_URL, BACKDROP_SIZE } from '../config/api';
 import type { MovieDetails, Video, CartItem, CastMember } from '../types/movie';
 
 export function MovieDetail() {
   const { id } = useParams<{ id: string }>();
+  const { state: adminState } = useAdmin();
   const [movie, setMovie] = useState<MovieDetails | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [cast, setCast] = useState<CastMember[]>([]);
@@ -23,6 +25,20 @@ export function MovieDetail() {
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [showCartAnimation, setShowCartAnimation] = useState(false);
   const { addItem, removeItem, isInCart } = useCart();
+
+  // Escuchar cambios de precios en tiempo real
+  useEffect(() => {
+    const handleAdminUpdate = () => {
+      // Forzar re-render cuando cambien los precios
+      setMovie(prev => prev ? { ...prev } : null);
+    };
+
+    window.addEventListener('admin_data_updated', handleAdminUpdate);
+    
+    return () => {
+      window.removeEventListener('admin_data_updated', handleAdminUpdate);
+    };
+  }, []);
 
   const movieId = parseInt(id || '0');
   const inCart = isInCart(movieId);

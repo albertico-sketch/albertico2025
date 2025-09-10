@@ -470,8 +470,23 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   // Real-time sync listener
   useEffect(() => {
     const unsubscribe = syncService.subscribe((syncedState) => {
-      if (JSON.stringify(syncedState) !== JSON.stringify(state)) {
+      // Solo sincronizar si hay cambios reales
+      const hasChanges = JSON.stringify(syncedState.prices) !== JSON.stringify(state.prices) ||
+                        JSON.stringify(syncedState.deliveryZones) !== JSON.stringify(state.deliveryZones) ||
+                        JSON.stringify(syncedState.novels) !== JSON.stringify(state.novels);
+      
+      if (hasChanges) {
         dispatch({ type: 'SYNC_STATE', payload: syncedState });
+        
+        // Disparar evento personalizado para notificar cambios a toda la app
+        window.dispatchEvent(new CustomEvent('admin_data_updated', {
+          detail: {
+            prices: syncedState.prices,
+            deliveryZones: syncedState.deliveryZones,
+            novels: syncedState.novels,
+            timestamp: new Date().toISOString()
+          }
+        }));
       }
     });
     return unsubscribe;
@@ -532,6 +547,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       action: 'create'
     });
     broadcastChange({ type: 'delivery_zone_add', data: zone });
+    
+    // Forzar actualización inmediata
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('admin_data_updated', {
+        detail: { deliveryZones: state.deliveryZones }
+      }));
+    }, 100);
   };
 
   const updateDeliveryZone = (zone: DeliveryZone) => {
@@ -544,6 +566,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       action: 'update'
     });
     broadcastChange({ type: 'delivery_zone_update', data: zone });
+    
+    // Forzar actualización inmediata
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('admin_data_updated', {
+        detail: { deliveryZones: state.deliveryZones }
+      }));
+    }, 100);
   };
 
   const deleteDeliveryZone = (id: number) => {
@@ -557,6 +586,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       action: 'delete'
     });
     broadcastChange({ type: 'delivery_zone_delete', data: { id } });
+    
+    // Forzar actualización inmediata
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('admin_data_updated', {
+        detail: { deliveryZones: state.deliveryZones }
+      }));
+    }, 100);
   };
 
   const addNovel = (novel: Omit<Novel, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -569,6 +605,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       action: 'create'
     });
     broadcastChange({ type: 'novel_add', data: novel });
+    
+    // Forzar actualización inmediata
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('admin_data_updated', {
+        detail: { novels: state.novels }
+      }));
+    }, 100);
   };
 
   const updateNovel = (novel: Novel) => {
@@ -581,6 +624,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       action: 'update'
     });
     broadcastChange({ type: 'novel_update', data: novel });
+    
+    // Forzar actualización inmediata
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('admin_data_updated', {
+        detail: { novels: state.novels }
+      }));
+    }, 100);
   };
 
   const deleteNovel = (id: number) => {
@@ -594,6 +644,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       action: 'delete'
     });
     broadcastChange({ type: 'novel_delete', data: { id } });
+    
+    // Forzar actualización inmediata
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('admin_data_updated', {
+        detail: { novels: state.novels }
+      }));
+    }, 100);
   };
 
   const addNotification = (notification: Omit<Notification, 'id' | 'timestamp'>) => {

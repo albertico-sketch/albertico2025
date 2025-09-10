@@ -540,7 +540,7 @@ export function AdminPanel() {
                             }
                           }}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Ej: Santiago de Cuba > Santiago de Cuba > Vista Alegre"
+                          placeholder="Ej: Santiago de Cuba > Municipio > Reparto"
                           required
                         />
                       </div>
@@ -600,6 +600,13 @@ export function AdminPanel() {
                   
                   {/* Zones list */}
                   <div className="space-y-3">
+                    {state.deliveryZones.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p>No hay zonas de entrega configuradas</p>
+                        <p className="text-sm">Agrega la primera zona usando el formulario de arriba</p>
+                      </div>
+                    )}
                     {state.deliveryZones.map((zone) => (
                       <div key={zone.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div>
@@ -773,6 +780,13 @@ export function AdminPanel() {
                   
                   {/* Novels list */}
                   <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {state.novels.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p>No hay novelas configuradas</p>
+                        <p className="text-sm">Agrega la primera novela usando el formulario de arriba</p>
+                      </div>
+                    )}
                     {state.novels.map((novel) => (
                       <div key={novel.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div className="flex-1">

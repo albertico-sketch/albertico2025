@@ -8,13 +8,13 @@ import { CastSection } from '../components/CastSection';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useCart } from '../context/CartContext';
-import { AdminContext } from '../context/AdminContext';
+import { useAdmin } from '../context/AdminContext';
 import { IMAGE_BASE_URL, BACKDROP_SIZE } from '../config/api';
 import type { TVShowDetails, Video, CartItem, Season, CastMember } from '../types/movie';
 
 export function TVDetail() {
   const { id } = useParams<{ id: string }>();
-  const adminContext = React.useContext(AdminContext);
+  const { state: adminState } = useAdmin();
   const [tvShow, setTVShow] = useState<TVShowDetails | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [cast, setCast] = useState<CastMember[]>([]);
@@ -29,7 +29,21 @@ export function TVDetail() {
   const { addItem, removeItem, updateSeasons, isInCart, getItemSeasons } = useCart();
 
   // Get current prices with real-time updates
-  const seriesPrice = adminContext?.state?.prices?.seriesPrice || 300;
+  const seriesPrice = adminState?.prices?.seriesPrice || 300;
+
+  // Escuchar cambios de precios en tiempo real
+  useEffect(() => {
+    const handleAdminUpdate = () => {
+      // Forzar re-render cuando cambien los precios
+      setTVShow(prev => prev ? { ...prev } : null);
+    };
+
+    window.addEventListener('admin_data_updated', handleAdminUpdate);
+    
+    return () => {
+      window.removeEventListener('admin_data_updated', handleAdminUpdate);
+    };
+  }, []);
 
   const tvId = parseInt(id || '0');
   const inCart = isInCart(tvId);

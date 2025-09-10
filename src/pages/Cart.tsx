@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Trash2, Star, Calendar, MessageCircle, ArrowLeft, Edit3, Tv, DollarSign, CreditCard, Calculator, Sparkles, Zap, Heart, Check, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { AdminContext } from '../context/AdminContext';
+import { useAdmin } from '../context/AdminContext';
 import { PriceCard } from '../components/PriceCard';
 import { CheckoutModal, OrderData, CustomerInfo } from '../components/CheckoutModal';
 import { sendOrderToWhatsApp } from '../utils/whatsapp';
@@ -10,7 +10,7 @@ import { IMAGE_BASE_URL, POSTER_SIZE } from '../config/api';
 
 export function Cart() {
   const { state, removeItem, clearCart, updatePaymentType, calculateItemPrice, calculateTotalPrice, calculateTotalByPaymentType } = useCart();
-  const adminContext = React.useContext(AdminContext);
+  const { state: adminState } = useAdmin();
   const [showCheckoutModal, setShowCheckoutModal] = React.useState(false);
 
   const handleCheckout = (orderData: OrderData) => {
@@ -233,7 +233,7 @@ export function Cart() {
                               <Zap className="h-3 w-3 inline ml-2 animate-pulse" />
                             )}
                           </button>
-                        </div>
+                        {state.items.filter(item => item.paymentType === 'transfer').length} elementos (+{adminState?.prices?.transferFeePercentage || 10}%)
                       </div>
                     </div>
                   </div>
@@ -274,7 +274,7 @@ export function Cart() {
                       )}
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="p-3 text-red-600 hover:text-white hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-500 bg-red-50 rounded-xl transition-all duration-300 transform hover:scale-110 shadow-md hover:shadow-lg"
+                          +{adminState?.prices?.transferFeePercentage || 10}% incluido
                         title="Eliminar del carrito"
                       >
                         <Trash2 className="h-5 w-5" />
@@ -288,7 +288,7 @@ export function Cart() {
         </div>
 
         {/* Order Summary */}
-        <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                          (+{adminState?.prices?.transferFeePercentage || 10}%)
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6 text-white">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
               <h3 className="text-xl sm:text-2xl font-bold flex items-center justify-center sm:justify-start">

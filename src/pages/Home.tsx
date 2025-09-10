@@ -7,6 +7,7 @@ import { HeroCarousel } from '../components/HeroCarousel';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { NovelasModal } from '../components/NovelasModal';
+import { useAdmin } from '../context/AdminContext';
 import type { Movie, TVShow } from '../types/movie';
 
 type TrendingTimeWindow = 'day' | 'week';
@@ -23,10 +24,28 @@ export function Home() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [showNovelasModal, setShowNovelasModal] = useState(false);
 
+  // Usar contexto admin para sincronización en tiempo real
+  const { state: adminState } = useAdmin();
+
   const timeWindowLabels = {
     day: 'Hoy',
     week: 'Esta Semana'
   };
+
+  // Escuchar cambios del admin en tiempo real
+  useEffect(() => {
+    const handleAdminUpdate = (event: CustomEvent) => {
+      console.log('Admin data updated in Home:', event.detail);
+      // Forzar re-render cuando cambien los datos del admin
+      setLastUpdate(new Date());
+    };
+
+    window.addEventListener('admin_data_updated', handleAdminUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('admin_data_updated', handleAdminUpdate as EventListener);
+    };
+  }, []);
 
   const fetchTrendingContent = async (timeWindow: TrendingTimeWindow) => {
     try {

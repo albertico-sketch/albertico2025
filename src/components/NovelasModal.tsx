@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { X, Download, MessageCircle, Phone, BookOpen, Info, Check, DollarSign, CreditCard, Calculator, Search, Filter, SortAsc, SortDesc, Smartphone } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
 
 // CATÁLOGO DE NOVELAS EMBEBIDO - Generado automáticamente
-const EMBEDDED_NOVELS = [];
+// Este será reemplazado por el estado del admin
 
 // PRECIOS EMBEBIDOS
-const EMBEDDED_PRICES = {
-  "moviePrice": 80,
-  "seriesPrice": 300,
-  "transferFeePercentage": 10,
-  "novelPricePerChapter": 5
-};
+// Estos serán obtenidos del contexto admin
 
 interface Novela {
   id: number;
@@ -28,6 +24,9 @@ interface NovelasModalProps {
 }
 
 export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
+  // Usar el contexto admin para obtener datos en tiempo real
+  const { state: adminState } = useAdmin();
+  
   const [selectedNovelas, setSelectedNovelas] = useState<number[]>([]);
   const [novelasWithPayment, setNovelasWithPayment] = useState<Novela[]>([]);
   const [showNovelList, setShowNovelList] = useState(false);
@@ -37,10 +36,10 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
   const [sortBy, setSortBy] = useState<'titulo' | 'año' | 'capitulos'>('titulo');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  // Get novels and prices from embedded configuration
-  const adminNovels = EMBEDDED_NOVELS;
-  const novelPricePerChapter = EMBEDDED_PRICES.novelPricePerChapter;
-  const transferFeePercentage = EMBEDDED_PRICES.transferFeePercentage;
+  // Get novels and prices from admin context (real-time)
+  const adminNovels = adminState.novels || [];
+  const novelPricePerChapter = adminState.prices?.novelPricePerChapter || 5;
+  const transferFeePercentage = adminState.prices?.transferFeePercentage || 10;
   
   // Base novels list
   const defaultNovelas: Novela[] = [
@@ -48,7 +47,7 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
   ];
 
   // Combine admin novels with default novels
-  const allNovelas = [...defaultNovelas, ...adminNovels.map(novel => ({
+  const allNovelas = [...defaultNovelas, ...adminNovels.map((novel: any) => ({
     id: novel.id,
     titulo: novel.titulo,
     genero: novel.genero,
@@ -56,6 +55,15 @@ export function NovelasModal({ isOpen, onClose }: NovelasModalProps) {
     año: novel.año,
     descripcion: novel.descripcion
   }))];
+
+  // Actualizar novelas cuando cambie el estado del admin
+  useEffect(() => {
+    const novelasWithDefaultPayment = allNovelas.map(novela => ({
+      ...novela,
+      paymentType: 'cash' as const
+    }));
+    setNovelasWithPayment(novelasWithDefaultPayment);
+  }, [adminState.novels, adminState.prices]);
 
   const phoneNumber = '+5354690878';
 
