@@ -13,55 +13,9 @@ import { TVDetail } from './pages/TVDetail';
 import { NovelDetail } from './pages/NovelDetail';
 import { Cart } from './pages/Cart';
 import { AdminPanel } from './pages/AdminPanel';
+import { AdminDashboard } from './pages/AdminDashboard';
 
 function App() {
-  // Detectar refresh y redirigir a la página principal (excepto /admin y rutas permitidas)
-  React.useEffect(() => {
-    const allowedPaths = ['/', '/admin'];
-    const currentPath = window.location.pathname;
-
-    const handleBeforeUnload = () => {
-      // Solo marcar para redirección si no estamos en una ruta permitida
-      if (!allowedPaths.includes(currentPath)) {
-        sessionStorage.setItem('pageRefreshed', 'true');
-      }
-    };
-
-    const handleLoad = () => {
-      // Si se detecta que la página fue recargada, redirigir a la página principal
-      if (sessionStorage.getItem('pageRefreshed') === 'true') {
-        sessionStorage.removeItem('pageRefreshed');
-        // No redirigir si estamos en una ruta permitida
-        if (!allowedPaths.includes(currentPath)) {
-          window.location.href = 'https://tvalacarta.vercel.app/';
-          return;
-        }
-      }
-    };
-
-    // Verificar al montar el componente si fue un refresh
-    // Solo verificar si NO estamos en /admin
-    if (currentPath !== '/admin') {
-      if (sessionStorage.getItem('pageRefreshed') === 'true') {
-        sessionStorage.removeItem('pageRefreshed');
-        if (!allowedPaths.includes(currentPath)) {
-          window.location.href = 'https://tvalacarta.vercel.app/';
-          return;
-        }
-      }
-    } else {
-      // Si estamos en /admin, limpiar el flag sin redirigir
-      sessionStorage.removeItem('pageRefreshed');
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('load', handleLoad);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('load', handleLoad);
-    };
-  }, []);
 
   // Deshabilitar zoom con teclado y gestos
   React.useEffect(() => {
@@ -115,29 +69,27 @@ function App() {
     <AdminProvider>
       <CartProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Routes>
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path="/*" element={
-                <>
-                  <Header />
-                  <main>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/movies" element={<Movies />} />
-                      <Route path="/tv" element={<TVShows />} />
-                      <Route path="/anime" element={<Anime />} />
-                      <Route path="/search" element={<SearchPage />} />
-                      <Route path="/movie/:id" element={<MovieDetail />} />
-                      <Route path="/tv/:id" element={<TVDetail />} />
-                      <Route path="/novel/:id" element={<NovelDetail />} />
-                      <Route path="/cart" element={<Cart />} />
-                    </Routes>
-                  </main>
-                </>
-              } />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/*" element={
+              <div className="min-h-screen bg-gray-50">
+                <Header />
+                <main>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/movies" element={<Movies />} />
+                    <Route path="/tv" element={<TVShows />} />
+                    <Route path="/anime" element={<Anime />} />
+                    <Route path="/search" element={<SearchPage />} />
+                    <Route path="/movie/:id" element={<MovieDetail />} />
+                    <Route path="/tv/:id" element={<TVDetail />} />
+                    <Route path="/novel/:id" element={<NovelDetail />} />
+                    <Route path="/cart" element={<Cart />} />
+                  </Routes>
+                </main>
+              </div>
+            } />
+          </Routes>
         </Router>
       </CartProvider>
     </AdminProvider>
