@@ -2,6 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scale-102 {
+    transform: scale(1.02);
+  }
+
+  @keyframes slide-in-from-bottom-5 {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: slide-in-from-bottom-5 0.3s ease-out;
+  }
+
+  .fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .slide-in-from-bottom-5 {
+    animation: slide-in-from-bottom-5 0.3s ease-out;
+  }
+}
+
 /* Configuraciones adicionales para deshabilitar zoom */
 @layer base {
   html {
@@ -181,5 +228,26 @@
   
   .animate-enhanced-pulse {
     animation: enhanced-pulse 2s ease-in-out infinite;
+  }
+
+  /* Netflix-style horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Smooth scroll behavior for Netflix-style rows */
+  .overflow-x-auto {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Scale effect optimization */
+  .scale-102 {
+    transform: scale(1.02);
   }
 }

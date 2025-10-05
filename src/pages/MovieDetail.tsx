@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Calendar, Clock, Plus, X, Play, Film, Globe, DollarSign, TrendingUp, Users, Building, Sparkles, Heart, Zap } from 'lucide-react';
+import { ArrowLeft, Star, Calendar, Clock, Plus, X, Play, Clapperboard, Globe, DollarSign, TrendingUp, Users, Building, Sparkles, Heart, Zap, CheckCircle } from 'lucide-react';
 import { tmdbService } from '../services/tmdb';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { PriceCard } from '../components/PriceCard';
@@ -8,13 +8,11 @@ import { CastSection } from '../components/CastSection';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useCart } from '../context/CartContext';
-import { useAdmin } from '../context/AdminContext';
 import { IMAGE_BASE_URL, BACKDROP_SIZE } from '../config/api';
 import type { MovieDetails, Video, CartItem, CastMember } from '../types/movie';
 
 export function MovieDetail() {
   const { id } = useParams<{ id: string }>();
-  const { state: adminState } = useAdmin();
   const [movie, setMovie] = useState<MovieDetails | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [cast, setCast] = useState<CastMember[]>([]);
@@ -25,20 +23,6 @@ export function MovieDetail() {
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [showCartAnimation, setShowCartAnimation] = useState(false);
   const { addItem, removeItem, isInCart } = useCart();
-
-  // Escuchar cambios de precios en tiempo real
-  useEffect(() => {
-    const handleAdminUpdate = () => {
-      // Forzar re-render cuando cambien los precios
-      setMovie(prev => prev ? { ...prev } : null);
-    };
-
-    window.addEventListener('admin_data_updated', handleAdminUpdate);
-    
-    return () => {
-      window.removeEventListener('admin_data_updated', handleAdminUpdate);
-    };
-  }, []);
 
   const movieId = parseInt(id || '0');
   const inCart = isInCart(movieId);
@@ -338,8 +322,8 @@ export function MovieDetail() {
                 
                 {/* Success indicator */}
                 {inCart && (
-                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white p-2 rounded-full animate-bounce shadow-lg">
-                    <Star className="h-4 w-4" />
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white p-2 rounded-full shadow-lg">
+                    <CheckCircle className="h-4 w-4" />
                   </div>
                 )}
               </div>
@@ -360,7 +344,7 @@ export function MovieDetail() {
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-blue-200 transition-colors">
                   <div className="flex items-center mb-2">
                     <div className="bg-blue-100 p-2 rounded-lg mr-3 shadow-sm">
-                      <Film className="h-4 w-4 text-blue-600" />
+                      <Clapperboard className="h-4 w-4 text-blue-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900">Estado</h3>
                   </div>

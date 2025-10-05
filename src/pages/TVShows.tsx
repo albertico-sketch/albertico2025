@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tv, Filter } from 'lucide-react';
+import { Monitor, Filter } from 'lucide-react';
 import { useOptimizedContent } from '../hooks/useOptimizedContent';
 import { tmdbService } from '../services/tmdb';
 import { MovieCard } from '../components/MovieCard';
@@ -63,28 +63,43 @@ export function TVShows() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center mb-6">
-            <Tv className="mr-3 h-8 w-8 text-purple-600" />
+            <Monitor className="mr-3 h-8 w-8 text-purple-600" />
             <h1 className="text-3xl font-bold text-gray-900">
               Series {categoryTitles[category]}
             </h1>
           </div>
 
-          {/* Category Filter */}
-          <div className="flex items-center space-x-1 bg-white rounded-lg p-1 shadow-sm w-fit">
-            <Filter className="h-4 w-4 text-gray-500 ml-2" />
-            {Object.entries(categoryTitles).map(([key, title]) => (
-              <button
-                key={key}
-                onClick={() => handleCategoryChange(key as TVCategory)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  category === key
-                    ? 'bg-purple-600 text-white'
-                    : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
-                }`}
+          {/* Category Filter - Responsive */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="hidden sm:flex items-center space-x-1 bg-white rounded-lg p-1 shadow-sm w-full sm:w-fit">
+              <Filter className="h-4 w-4 text-gray-500 ml-2" />
+              {Object.entries(categoryTitles).map(([key, title]) => (
+                <button
+                  key={key}
+                  onClick={() => handleCategoryChange(key as TVCategory)}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    category === key
+                      ? 'bg-purple-600 text-white'
+                      : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                  }`}
+                >
+                  {title}
+                </button>
+              ))}
+            </div>
+
+            {/* Mobile/Tablet Dropdown */}
+            <div className="sm:hidden bg-white rounded-lg p-1 shadow-sm">
+              <select
+                value={category}
+                onChange={(e) => handleCategoryChange(e.target.value as TVCategory)}
+                className="w-full px-4 py-2 rounded-md text-sm font-medium bg-purple-600 text-white border-none focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                {title}
-              </button>
-            ))}
+                {Object.entries(categoryTitles).map(([key, title]) => (
+                  <option key={key} value={key}>{title}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 

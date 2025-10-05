@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, TrendingUp, Star, Tv, Filter, Calendar, Clock, Flame, BookOpen } from 'lucide-react';
+import { ChevronRight, TrendingUp, Star, Monitor, Filter, Calendar, Clock, Flame, Library, Play, Clapperboard, Sparkles, Radio, CheckCircle2 } from 'lucide-react';
 import { tmdbService } from '../services/tmdb';
+import { useCart } from '../context/CartContext';
+import { useAdmin } from '../context/AdminContext';
 import { MovieCard } from '../components/MovieCard';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { NovelasModal } from '../components/NovelasModal';
-import { useAdmin } from '../context/AdminContext';
+import { NetflixCarousel } from '../components/NetflixCarousel';
+import { FloatingNavigationButton } from '../components/FloatingNavigationButton';
+import { NovelCard } from '../components/NovelCard';
 import type { Movie, TVShow } from '../types/movie';
 
 type TrendingTimeWindow = 'day' | 'week';
 
 export function Home() {
+  const { state: adminState, addNotification } = useAdmin();
+  const { getCurrentPrices } = useCart();
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
   const [popularTVShows, setPopularTVShows] = useState<TVShow[]>([]);
   const [popularAnime, setPopularAnime] = useState<TVShow[]>([]);
   const [trendingContent, setTrendingContent] = useState<(Movie | TVShow)[]>([]);
+  const [novelTrendingContent, setNovelTrendingContent] = useState<any[]>([]);
   const [heroItems, setHeroItems] = useState<(Movie | TVShow)[]>([]);
   const [trendingTimeWindow, setTrendingTimeWindow] = useState<TrendingTimeWindow>('day');
   const [loading, setLoading] = useState(true);
@@ -24,40 +31,62 @@ export function Home() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [showNovelasModal, setShowNovelasModal] = useState(false);
 
-  // Usar contexto admin para sincronización en tiempo real
-  const { state: adminState } = useAdmin();
-
+  const currentPrices = getCurrentPrices();
   const timeWindowLabels = {
-    day: 'Hoy',
-    week: 'Esta Semana'
+    day: 'Hoy + Novelas en Transmisión',
+    week: 'Esta Semana + Novelas Finalizadas'
   };
-
-  // Escuchar cambios del admin en tiempo real
-  useEffect(() => {
-    const handleAdminUpdate = (event: CustomEvent) => {
-      console.log('Admin data updated in Home:', event.detail);
-      // Forzar re-render cuando cambien los datos del admin
-      setLastUpdate(new Date());
-    };
-
-    window.addEventListener('admin_data_updated', handleAdminUpdate as EventListener);
-    
-    return () => {
-      window.removeEventListener('admin_data_updated', handleAdminUpdate as EventListener);
-    };
-  }, []);
 
   const fetchTrendingContent = async (timeWindow: TrendingTimeWindow) => {
     try {
       const response = await tmdbService.getTrendingAll(timeWindow, 1);
       const uniqueContent = tmdbService.removeDuplicates(response.results);
       setTrendingContent(uniqueContent.slice(0, 12));
+      
+      // Add novels to trending based on time window
+      const novelTrending = getNovelTrendingContent(timeWindow);
+      setNovelTrendingContent(novelTrending);
+      
       setLastUpdate(new Date());
     } catch (err) {
       console.error('Error fetching trending content:', err);
     }
   };
+  
+  const getNovelTrendingContent = (timeWindow: TrendingTimeWindow): any[] => {
+    const novels = adminState.novels || [];
+    
+    if (timeWindow === 'day') {
+      // Show novels currently airing
+      return novels.filter(novel => novel.estado === 'transmision').slice(0, 12);
+    } else {
+      // Show recently finished novels
+      return novels.filter(novel => novel.estado === 'finalizada').slice(0, 10);
+    }
+  };
 
+  const getCountryFlag = (country: string) => {
+    const flags: { [key: string]: string } = {
+      'Turquía': '🇹🇷',
+      'Cuba': '🇨🇺',
+      'México': '🇲🇽',
+      'Brasil': '🇧🇷',
+      'Colombia': '🇨🇴',
+      'Argentina': '🇦🇷',
+      'España': '🇪🇸',
+      'Estados Unidos': '🇺🇸',
+      'Corea del Sur': '🇰🇷',
+      'India': '🇮🇳',
+      'Reino Unido': '🇬🇧',
+      'Francia': '🇫🇷',
+      'Italia': '🇮🇹',
+      'Alemania': '🇩🇪',
+      'Japón': '🇯🇵',
+      'China': '🇨🇳',
+      'Rusia': '🇷🇺'
+    };
+    return flags[country] || '🌍';
+  };
   const fetchAllContent = async () => {
     try {
       setLoading(true);
@@ -193,21 +222,21 @@ export function Home() {
               to="/movies"
               className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center"
             >
-              <TrendingUp className="mr-2 h-5 w-5" />
+              <Clapperboard className="mr-2 h-5 w-5" />
               Explorar Películas
             </Link>
             <Link
               to="/tv"
               className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center"
             >
-              <Tv className="mr-2 h-5 w-5" />
+              <Monitor className="mr-2 h-5 w-5" />
               Ver Series
             </Link>
             <button
               onClick={() => setShowNovelasModal(true)}
               className="bg-pink-600 hover:bg-pink-700 px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center"
             >
-              <BookOpen className="mr-2 h-5 w-5" />
+              <Library className="mr-2 h-5 w-5" />
               Catálogo de Novelas
             </button>
           </div>
@@ -216,7 +245,7 @@ export function Home() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Trending Content */}
-        <section className="mb-12">
+        <section className="mb-12" id="trending">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center">
               <Flame className="mr-2 h-6 w-6 text-red-500" />
@@ -243,81 +272,260 @@ export function Home() {
               ))}
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+          <NetflixCarousel
+            title=""
+            icon={null}
+          >
             {trendingContent.map((item) => {
               const itemType = 'title' in item ? 'movie' : 'tv';
               return (
                 <MovieCard key={`trending-${itemType}-${item.id}`} item={item} type={itemType} />
               );
             })}
-          </div>
+          </NetflixCarousel>
+          
         </section>
 
-        {/* Popular Movies */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Star className="mr-2 h-6 w-6 text-yellow-500" />
+        {/* Sección Dedicada: Novelas en Transmisión - Estilo Netflix */}
+        <section className="mb-12" id="novelas-transmision">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
+              <div className="bg-gradient-to-r from-red-500 to-pink-500 p-2 rounded-xl mr-3 shadow-lg">
+                <Radio className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
+              Novelas en Transmisión
+            </h2>
+            <button
+              onClick={() => setShowNovelasModal(true)}
+              className="text-pink-600 hover:text-pink-800 flex items-center font-medium text-sm sm:text-base"
+            >
+              Ver todas
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </button>
+          </div>
+
+          {adminState.novels && adminState.novels.length > 0 ? (
+            <>
+              {adminState.novels.filter(novel => novel.estado === 'transmision').length > 0 ? (
+                <>
+                  <NetflixCarousel
+                    title=""
+                    icon={null}
+                    onViewAll={() => setShowNovelasModal(true)}
+                  >
+                    {adminState.novels
+                      .filter(novel => novel.estado === 'transmision')
+                      .map((novel) => (
+                        <NovelCard key={`novel-live-${novel.id}`} novel={novel} />
+                      ))}
+                  </NetflixCarousel>
+                  {adminState.novels.filter(novel => novel.estado === 'transmision').length > 5 && (
+                  <div className="text-center mt-6">
+                    <button
+                      onClick={() => setShowNovelasModal(true)}
+                      className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center mx-auto text-sm sm:text-base"
+                    >
+                      <Library className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      Ver Todas ({adminState.novels.filter(novel => novel.estado === 'transmision').length})
+                    </button>
+                  </div>
+                  )}
+                </>
+              ) : (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
+                  <div className="bg-red-100 p-4 rounded-full w-fit mx-auto mb-4">
+                    <Radio className="h-8 w-8 text-red-500" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">
+                    No hay novelas en transmisión
+                  </h3>
+                  <p className="text-red-600 mb-4">
+                    Actualmente no hay novelas siendo transmitidas.
+                  </p>
+                  <button
+                    onClick={() => setShowNovelasModal(true)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    Ver catálogo completo
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+              <div className="bg-gray-100 p-4 rounded-full w-fit mx-auto mb-4">
+                <Library className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Catálogo de novelas no disponible
+              </h3>
+              <p className="text-gray-600">
+                No se pudo cargar el catálogo de novelas.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* Sección Dedicada: Novelas Finalizadas - Estilo Netflix */}
+        <section className="mb-12" id="novelas-finalizadas">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-2 rounded-xl mr-3 shadow-lg">
+                <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
+              Novelas Finalizadas
+            </h2>
+            <button
+              onClick={() => setShowNovelasModal(true)}
+              className="text-green-600 hover:text-green-800 flex items-center font-medium text-sm sm:text-base"
+            >
+              Ver todas
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </button>
+          </div>
+
+          {adminState.novels && adminState.novels.length > 0 ? (
+            <>
+              {adminState.novels.filter(novel => novel.estado === 'finalizada').length > 0 ? (
+                <>
+                  <NetflixCarousel
+                    title=""
+                    icon={null}
+                    onViewAll={() => setShowNovelasModal(true)}
+                  >
+                    {adminState.novels
+                      .filter(novel => novel.estado === 'finalizada')
+                      .map((novel) => (
+                        <NovelCard key={`novel-finished-${novel.id}`} novel={novel} />
+                      ))}
+                  </NetflixCarousel>
+                  {adminState.novels.filter(novel => novel.estado === 'finalizada').length > 5 && (
+                  <div className="text-center mt-6">
+                    <button
+                      onClick={() => setShowNovelasModal(true)}
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center mx-auto text-sm sm:text-base"
+                    >
+                      <Library className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      Ver Todas ({adminState.novels.filter(novel => novel.estado === 'finalizada').length})
+                    </button>
+                  </div>
+                  )}
+                </>
+              ) : (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                  <div className="bg-green-100 p-4 rounded-full w-fit mx-auto mb-4">
+                    <CheckCircle2 className="h-8 w-8 text-green-500" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-green-800 mb-2">
+                    No hay novelas finalizadas
+                  </h3>
+                  <p className="text-green-600 mb-4">
+                    Actualmente no hay novelas finalizadas en el catálogo.
+                  </p>
+                  <button
+                    onClick={() => setShowNovelasModal(true)}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    Ver catálogo completo
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+              <div className="bg-gray-100 p-4 rounded-full w-fit mx-auto mb-4">
+                <Library className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Catálogo de novelas no disponible
+              </h3>
+              <p className="text-gray-600">
+                No se pudo cargar el catálogo de novelas.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* Popular Movies - Netflix Style */}
+        <section className="mb-12" id="peliculas">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-xl mr-3 shadow-lg">
+                <Clapperboard className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
               Películas Destacadas
             </h2>
             <Link
               to="/movies"
-              className="text-blue-600 hover:text-blue-800 flex items-center font-medium"
+              className="text-blue-600 hover:text-blue-800 flex items-center font-medium text-sm sm:text-base"
             >
               Ver todas
               <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <NetflixCarousel
+            title=""
+            icon={null}
+          >
             {popularMovies.map((movie) => (
               <MovieCard key={movie.id} item={movie} type="movie" />
             ))}
-          </div>
+          </NetflixCarousel>
         </section>
 
-        {/* Popular TV Shows */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Tv className="mr-2 h-6 w-6 text-blue-500" />
+        {/* Popular TV Shows - Netflix Style */}
+        <section className="mb-12" id="series">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
+              <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-2 rounded-xl mr-3 shadow-lg">
+                <Monitor className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
               Series Destacadas
             </h2>
             <Link
               to="/tv"
-              className="text-blue-600 hover:text-blue-800 flex items-center font-medium"
+              className="text-blue-600 hover:text-blue-800 flex items-center font-medium text-sm sm:text-base"
             >
               Ver todas
               <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <NetflixCarousel
+            title=""
+            icon={null}
+          >
             {popularTVShows.map((show) => (
               <MovieCard key={show.id} item={show} type="tv" />
             ))}
-          </div>
+          </NetflixCarousel>
         </section>
 
-        {/* Popular Anime */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              <span className="mr-2 text-2xl">🎌</span>
+        {/* Popular Anime - Netflix Style */}
+        <section className="mb-12" id="anime">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center">
+              <div className="bg-gradient-to-r from-pink-500 to-pink-600 p-2 rounded-xl mr-3 shadow-lg">
+                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
               Anime Destacado
             </h2>
             <Link
               to="/anime"
-              className="text-blue-600 hover:text-blue-800 flex items-center font-medium"
+              className="text-blue-600 hover:text-blue-800 flex items-center font-medium text-sm sm:text-base"
             >
               Ver todos
               <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <NetflixCarousel
+            title=""
+            icon={null}
+          >
             {popularAnime.map((anime) => (
               <MovieCard key={anime.id} item={anime} type="tv" />
             ))}
-          </div>
+          </NetflixCarousel>
         </section>
 
         {/* Last Update Info (Hidden from users) */}
@@ -327,10 +535,13 @@ export function Home() {
       </div>
       
       {/* Modal de Novelas */}
-      <NovelasModal 
-        isOpen={showNovelasModal} 
-        onClose={() => setShowNovelasModal(false)} 
+      <NovelasModal
+        isOpen={showNovelasModal}
+        onClose={() => setShowNovelasModal(false)}
       />
+
+      {/* Floating Navigation Button */}
+      <FloatingNavigationButton />
     </div>
   );
 }
