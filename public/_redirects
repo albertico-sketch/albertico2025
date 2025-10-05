@@ -2,6 +2,7 @@
 /*    /index.html   200
 
 # Handle specific routes
+/admin     /index.html   200
 /movies    /index.html   200
 /tv        /index.html   200
 /anime     /index.html   200

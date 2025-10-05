@@ -15,19 +15,24 @@ import { Cart } from './pages/Cart';
 import { AdminPanel } from './pages/AdminPanel';
 
 function App() {
-  // Detectar refresh y redirigir a la página principal (excepto /admin)
+  // Detectar refresh y redirigir a la página principal (excepto /admin y rutas permitidas)
   React.useEffect(() => {
+    const allowedPaths = ['/', '/admin'];
+    const currentPath = window.location.pathname;
+
     const handleBeforeUnload = () => {
-      // Marcar que la página se está recargando
-      sessionStorage.setItem('pageRefreshed', 'true');
+      // Solo marcar para redirección si no estamos en una ruta permitida
+      if (!allowedPaths.includes(currentPath)) {
+        sessionStorage.setItem('pageRefreshed', 'true');
+      }
     };
 
     const handleLoad = () => {
       // Si se detecta que la página fue recargada, redirigir a la página principal
       if (sessionStorage.getItem('pageRefreshed') === 'true') {
         sessionStorage.removeItem('pageRefreshed');
-        // No redirigir si estamos en la página principal o en /admin
-        if (window.location.pathname !== '/' && window.location.pathname !== '/admin') {
+        // No redirigir si estamos en una ruta permitida
+        if (!allowedPaths.includes(currentPath)) {
           window.location.href = 'https://tvalacarta.vercel.app/';
           return;
         }
@@ -35,12 +40,18 @@ function App() {
     };
 
     // Verificar al montar el componente si fue un refresh
-    if (sessionStorage.getItem('pageRefreshed') === 'true') {
-      sessionStorage.removeItem('pageRefreshed');
-      if (window.location.pathname !== '/' && window.location.pathname !== '/admin') {
-        window.location.href = 'https://tvalacarta.vercel.app/';
-        return;
+    // Solo verificar si NO estamos en /admin
+    if (currentPath !== '/admin') {
+      if (sessionStorage.getItem('pageRefreshed') === 'true') {
+        sessionStorage.removeItem('pageRefreshed');
+        if (!allowedPaths.includes(currentPath)) {
+          window.location.href = 'https://tvalacarta.vercel.app/';
+          return;
+        }
       }
+    } else {
+      // Si estamos en /admin, limpiar el flag sin redirigir
+      sessionStorage.removeItem('pageRefreshed');
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload);
