@@ -227,23 +227,44 @@ export function NovelDetail() {
                   Sinopsis
                 </h2>
               </div>
-              <p className="text-gray-700 leading-relaxed text-lg mb-6">
+              <p className="text-gray-700 leading-relaxed text-lg mb-8">
                 {novel.descripcion || 'Sin descripción disponible.'}
               </p>
 
-              {/* Novel Image */}
-              <div className="mb-6">
-                <div className="relative w-full max-w-2xl mx-auto rounded-xl overflow-hidden shadow-2xl border-2 border-pink-200">
-                  <img
-                    src={backdropUrl}
-                    alt={novel.titulo}
-                    className="w-full h-auto object-contain"
-                    style={{ maxHeight: '600px' }}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop';
-                    }}
-                  />
+              {/* Novel Image - Version 2 */}
+              <div className="mb-8">
+                <div className="relative w-full">
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-400 rounded-2xl blur-xl opacity-30"></div>
+                  <div className="relative bg-white rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                    <div className="relative">
+                      <img
+                        src={backdropUrl}
+                        alt={novel.titulo}
+                        className="w-full h-auto object-contain bg-gradient-to-br from-gray-50 to-gray-100"
+                        style={{
+                          maxHeight: '700px',
+                          minHeight: '300px'
+                        }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop';
+                        }}
+                      />
+                      <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl pointer-events-none"></div>
+                    </div>
+                    <div className="bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-3">
+                      <div className="flex items-center justify-between text-white">
+                        <div className="flex items-center">
+                          <BookOpen className="h-4 w-4 mr-2" />
+                          <span className="text-sm font-semibold">{novel.titulo}</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{novel.año}</span>
+                          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{novel.capitulos} cap.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
