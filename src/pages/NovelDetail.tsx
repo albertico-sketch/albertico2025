@@ -227,10 +227,26 @@ export function NovelDetail() {
                   Sinopsis
                 </h2>
               </div>
-              <p className="text-gray-700 leading-relaxed text-lg mb-4">
+              <p className="text-gray-700 leading-relaxed text-lg mb-6">
                 {novel.descripcion || 'Sin descripción disponible.'}
               </p>
-              
+
+              {/* Novel Image */}
+              <div className="mb-6">
+                <div className="relative w-full max-w-2xl mx-auto rounded-xl overflow-hidden shadow-2xl border-2 border-pink-200">
+                  <img
+                    src={backdropUrl}
+                    alt={novel.titulo}
+                    className="w-full h-auto object-contain"
+                    style={{ maxHeight: '600px' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop';
+                    }}
+                  />
+                </div>
+              </div>
+
               {/* Novel specific information */}
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-4 border border-pink-200">
