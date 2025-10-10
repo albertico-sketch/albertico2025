@@ -231,36 +231,78 @@ export function NovelDetail() {
                 {novel.descripcion || 'Sin descripción disponible.'}
               </p>
 
-              {/* Novel Image - Version 2 */}
+              {/* Novel Image - Version 3 Enhanced */}
               <div className="mb-8">
-                <div className="relative w-full">
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-400 rounded-2xl blur-xl opacity-30"></div>
-                  <div className="relative bg-white rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-                    <div className="relative">
-                      <img
-                        src={backdropUrl}
-                        alt={novel.titulo}
-                        className="w-full h-auto object-contain bg-gradient-to-br from-gray-50 to-gray-100"
-                        style={{
-                          maxHeight: '700px',
-                          minHeight: '300px'
-                        }}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop';
-                        }}
-                      />
-                      <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl pointer-events-none"></div>
-                    </div>
-                    <div className="bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-3">
+                <div className="relative w-full group">
+                  {/* Glow effect background */}
+                  <div className="absolute -inset-4 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
+
+                  {/* Main container */}
+                  <div className="relative bg-gradient-to-br from-white via-gray-50 to-white rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                    {/* Top banner */}
+                    <div className="bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 px-6 py-4">
                       <div className="flex items-center justify-between text-white">
-                        <div className="flex items-center">
-                          <BookOpen className="h-4 w-4 mr-2" />
-                          <span className="text-sm font-semibold">{novel.titulo}</span>
-                        </div>
                         <div className="flex items-center space-x-3">
-                          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{novel.año}</span>
-                          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">{novel.capitulos} cap.</span>
+                          <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+                            <BookOpen className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium opacity-90">Imagen Oficial</p>
+                            <p className="text-sm font-bold">{novel.titulo}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            novel.estado === 'transmision'
+                              ? 'bg-red-500/80 text-white'
+                              : 'bg-green-500/80 text-white'
+                          }`}>
+                            {novel.estado === 'transmision' ? '📡 LIVE' : '✅ COMPLETA'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Image container */}
+                    <div className="relative bg-gradient-to-br from-gray-100 via-gray-50 to-white p-4 sm:p-6 md:p-8">
+                      <div className="relative rounded-xl overflow-hidden shadow-xl">
+                        <img
+                          src={backdropUrl}
+                          alt={novel.titulo}
+                          className="w-full h-auto object-contain mx-auto"
+                          style={{
+                            maxHeight: '650px',
+                            minHeight: '350px'
+                          }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop';
+                          }}
+                        />
+                        {/* Subtle inner shadow */}
+                        <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-xl pointer-events-none"></div>
+                      </div>
+                    </div>
+
+                    {/* Bottom info bar */}
+                    <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-t border-gray-200">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center text-sm text-gray-700">
+                            <Calendar className="h-4 w-4 mr-1.5 text-pink-600" />
+                            <span className="font-semibold">{novel.año}</span>
+                          </div>
+                          <div className="flex items-center text-sm text-gray-700">
+                            <Monitor className="h-4 w-4 mr-1.5 text-purple-600" />
+                            <span className="font-semibold">{novel.capitulos} capítulos</span>
+                          </div>
+                          <div className="flex items-center text-sm text-gray-700">
+                            <Globe className="h-4 w-4 mr-1.5 text-indigo-600" />
+                            <span className="font-semibold">{getCountryFlag(novel.pais || 'No especificado')} {novel.pais || 'No especificado'}</span>
+                          </div>
+                        </div>
+                        <div className="bg-gradient-to-r from-pink-100 to-purple-100 px-4 py-2 rounded-full">
+                          <span className="text-xs font-bold text-purple-700">{novel.genero}</span>
                         </div>
                       </div>
                     </div>
