@@ -13,7 +13,7 @@ export const seedData = {
       precio: 350,
       duracion_estimada: 30,
       categoria_id: 1,
-      img_url: '/images/services/consulta-general.jpg',
+      img_url: 'https://images.pexels.com/photos/6235233/pexels-photo-6235233.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -23,7 +23,7 @@ export const seedData = {
       precio: 280,
       duracion_estimada: 20,
       categoria_id: 1,
-      img_url: '/images/services/vacunacion.jpg',
+      img_url: 'https://images.pexels.com/photos/6235657/pexels-photo-6235657.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -33,7 +33,7 @@ export const seedData = {
       precio: 200,
       duracion_estimada: 15,
       categoria_id: 1,
-      img_url: '/images/services/desparasitacion.jpg',
+      img_url: 'https://images.pexels.com/photos/6235020/pexels-photo-6235020.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -43,7 +43,7 @@ export const seedData = {
       precio: 1200,
       duracion_estimada: 120,
       categoria_id: 1,
-      img_url: '/images/services/esterilizacion.jpg',
+      img_url: 'https://images.pexels.com/photos/6235128/pexels-photo-6235128.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -53,7 +53,7 @@ export const seedData = {
       precio: 450,
       duracion_estimada: 45,
       categoria_id: 1,
-      img_url: '/images/services/analisis-sangre.jpg',
+      img_url: 'https://images.pexels.com/photos/6235224/pexels-photo-6235224.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -63,7 +63,7 @@ export const seedData = {
       precio: 180,
       duracion_estimada: 45,
       categoria_id: 2,
-      img_url: '/images/services/bano-basico.jpg',
+      img_url: 'https://images.pexels.com/photos/6816861/pexels-photo-6816861.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -73,7 +73,7 @@ export const seedData = {
       precio: 250,
       duracion_estimada: 60,
       categoria_id: 2,
-      img_url: '/images/services/corte-pelo.jpg',
+      img_url: 'https://images.pexels.com/photos/6816848/pexels-photo-6816848.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -83,7 +83,7 @@ export const seedData = {
       precio: 120,
       duracion_estimada: 20,
       categoria_id: 2,
-      img_url: '/images/services/limpieza-oidos.jpg',
+      img_url: 'https://images.pexels.com/photos/6816854/pexels-photo-6816854.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -93,7 +93,7 @@ export const seedData = {
       precio: 150,
       duracion_estimada: 25,
       categoria_id: 2,
-      img_url: '/images/services/cepillado-dientes.jpg',
+      img_url: 'https://images.pexels.com/photos/6816859/pexels-photo-6816859.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     },
     {
@@ -103,7 +103,7 @@ export const seedData = {
       precio: 200,
       duracion_estimada: 30,
       categoria_id: 2,
-      img_url: '/images/services/antipulgas.jpg',
+      img_url: 'https://images.pexels.com/photos/6816856/pexels-photo-6816856.jpeg?auto=compress&cs=tinysrgb&w=800',
       disponible: true
     }
   ],
