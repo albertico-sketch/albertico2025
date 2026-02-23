@@ -11,6 +11,10 @@ export const initialProductsState = {
     totalAmount: 0,
     totalCount: 0,
   },
+  salesData: {
+    dailySales: [],
+    weeklySales: []
+  },
   addressList: [
     {
       addressId: 'abc',
@@ -136,6 +140,55 @@ export const productsReducer = (state, action) => {
       return {
         ...state,
         addressList: [],
+      };
+    }
+
+    case PRODUCTS_ACTION.UPDATE_SALES_DATA: {
+      return {
+        ...state,
+        salesData: action.payload.salesData,
+      };
+    }
+
+    case PRODUCTS_ACTION.ADD_SALE: {
+      const { productId, quantity, date } = action.payload;
+      const today = new Date().toDateString();
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      
+      // Actualizar ventas diarias
+      const dailySales = [...state.salesData.dailySales];
+      const existingDailySale = dailySales.find(sale => 
+        sale.productId === productId && new Date(sale.date).toDateString() === today
+      );
+      
+      if (existingDailySale) {
+        existingDailySale.quantity += quantity;
+      } else {
+        dailySales.push({ productId, quantity, date: new Date() });
+      }
+      
+      // Actualizar ventas semanales
+      const weeklySales = [...state.salesData.weeklySales];
+      const existingWeeklySale = weeklySales.find(sale => 
+        sale.productId === productId && new Date(sale.date) >= weekAgo
+      );
+      
+      if (existingWeeklySale) {
+        existingWeeklySale.quantity += quantity;
+      } else {
+        weeklySales.push({ productId, quantity, date: new Date() });
+      }
+      
+      return {
+        ...state,
+        salesData: {
+          dailySales: dailySales.filter(sale => 
+            new Date(sale.date).toDateString() === today
+          ),
+          weeklySales: weeklySales.filter(sale => 
+            new Date(sale.date) >= weekAgo
+          )
+        }
       };
     }
 

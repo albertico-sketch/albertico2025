@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
-import { toastHandler, wait } from '../utils/utils';
+import { toastHandler, wait, initializeSalesData, updateSalesData } from '../utils/utils';
 import {
   deleteCartDataService,
   deleteFromCartService,
@@ -88,6 +88,13 @@ const ProductsContextProvider = ({ children }) => {
   // useEffects
   useEffect(() => {
     fetchAllProductsAndCategories();
+    
+    // Inicializar datos de ventas
+    const salesData = initializeSalesData();
+    dispatch({
+      type: PRODUCTS_ACTION.UPDATE_SALES_DATA,
+      payload: { salesData }
+    });
   }, []);
 
   useEffect(() => {
@@ -265,6 +272,17 @@ const ProductsContextProvider = ({ children }) => {
     });
   };
 
+  const addSaleDispatch = (productId, quantity) => {
+    dispatch({
+      type: PRODUCTS_ACTION.ADD_SALE,
+      payload: { productId, quantity, date: new Date() }
+    });
+    
+    // Actualizar localStorage
+    const currentState = productsState.salesData;
+    updateSalesData(currentState);
+  };
+
   // const addOrderDispatch = async (orderObj) => {
   //   dispatch({
   //     type: PRODUCTS_ACTION.ADD_ORDER,
@@ -299,6 +317,7 @@ const ProductsContextProvider = ({ children }) => {
         clearCartInContext,
         clearWishlistInContext,
         clearAddressInContext,
+        addSaleDispatch,
       }}
     >
       {children}

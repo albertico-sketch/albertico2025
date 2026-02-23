@@ -29,7 +29,7 @@ const Suggestions = ({
     );
   }
 
-  if (suggestionsList.length < 1) {
+  if (!suggestionsList || suggestionsList.length < 1) {
     return (
       <section className={styles.suggestions}>
         <div className='horizontal-center'>

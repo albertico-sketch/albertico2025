@@ -65,16 +65,18 @@ const useSearchSuggestions = ({
   const fetchProductsOnSearch = async () => {
     try {
       const resProducts = await getProductsOnSearch({ query: trimmedSearch });
-      setSuggestionsList(resProducts);
+      setSuggestionsList(resProducts || []);
       setIsSuggestionsLoading(false);
 
-      if (resProducts.length < 1) {
+      if (!resProducts || resProducts.length < 1) {
         return;
       }
 
       updateCache(resProducts);
     } catch (error) {
       console.log(error);
+      setSuggestionsList([]);
+      setIsSuggestionsLoading(false);
     }
   };
 

@@ -1,4 +1,5 @@
 import { Categories, FeaturedProducts, Hero } from '../components';
+import BestSellers from '../components/BestSellers/BestSellers';
 import { useAllProductsContext } from '../contexts/ProductsContextProvider';
 
 const Home = () => {
@@ -11,6 +12,7 @@ const Home = () => {
   return (
     <main>
       <Hero />
+      <BestSellers />
       <Categories />
       <FeaturedProducts />
     </main>

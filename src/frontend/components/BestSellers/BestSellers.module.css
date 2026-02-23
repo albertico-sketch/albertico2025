@@ -1,0 +1,41 @@
+.bestSellersCenter {
+  display: grid;
+  justify-items: center;
+  gap: 3rem;
+}
+
+.filterContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.productWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.salesBadge {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: var(--green-medium);
+  color: var(--white);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--borderRadius);
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
+@media screen and (min-width: 768px) {
+  .bestSellersCenter {
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+  
+  .salesBadge {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+  }
+}

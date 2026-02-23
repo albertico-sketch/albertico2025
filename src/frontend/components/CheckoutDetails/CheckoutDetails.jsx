@@ -24,6 +24,7 @@ const CheckoutDetails = ({
     addressList: addressListFromContext,
     cart: cartFromContext,
     clearCartDispatch,
+    addSaleDispatch,
     // addOrderDispatch,
   } = useAllProductsContext();
 
@@ -94,6 +95,13 @@ const CheckoutDetails = ({
           'https://res.cloudinary.com/dtbd1y4en/image/upload/v1685641105/apple-touch-icon_edbdny.png',
 
         handler: async (response) => {
+          // Registrar las ventas antes de limpiar el carrito
+          cartFromContext.forEach(item => {
+            // Extraer el ID del producto original (sin el color)
+            const originalProductId = item._id.replace(item.colors?.[0]?.color || '', '');
+            addSaleDispatch(originalProductId, item.qty);
+          });
+
           const tempObj = {
             products: [...cartFromContext],
             amount: finalPriceToPay,

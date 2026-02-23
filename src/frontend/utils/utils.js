@@ -137,3 +137,20 @@ export const validateEmptyTextInput = ({ inputsObj, optionalInput }) => {
 
   return false;
 };
+
+export const initializeSalesData = () => {
+  const salesData = getFromLocalStorage('salesData');
+  if (!salesData) {
+    const initialSalesData = {
+      dailySales: [],
+      weeklySales: []
+    };
+    setIntoLocalStorage('salesData', initialSalesData);
+    return initialSalesData;
+  }
+  return salesData;
+};
+
+export const updateSalesData = (salesData) => {
+  setIntoLocalStorage('salesData', salesData);
+};
