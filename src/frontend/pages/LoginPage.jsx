@@ -67,7 +67,18 @@ const LoginPage = () => {
       // if non-registered user comes from typing '/login' at the url, after success redirect it to '/'
       navigate(locationOfLogin?.state?.from ?? '/');
     } catch ({ response }) {
-      const errorText = response?.data?.errors[0].split('.')[0];
+      let errorText = 'An error occurred during login';
+      
+      if (response?.data?.errors && Array.isArray(response.data.errors) && response.data.errors.length > 0) {
+        errorText = response.data.errors[0].split('.')[0];
+      } else if (response?.data?.error) {
+        errorText = typeof response.data.error === 'string' 
+          ? response.data.error 
+          : response.data.error.message || 'Login failed';
+      } else if (response?.statusText) {
+        errorText = response.statusText;
+      }
+      
       toastHandler(ToastType.Error, errorText);
     }
 
