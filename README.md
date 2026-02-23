@@ -1,226 +1,102 @@
-# 🐾 VetSync - Plataforma Veterinaria Digital
+<div align="center">
+  <img src="https://res.cloudinary.com/dtbd1y4en/image/upload/v1686085866/jethalalBanner_mwo4ml.png" height="300" width="300" alt="logo"/>
 
-Una plataforma web moderna que conecta a dueños de mascotas con servicios veterinarios de calidad, facilitando la gestión de citas, historial médico y servicios en un solo lugar.
+# The Gada Electronics
 
-![VetSync](./src/assets/vetsync_logo.webp)
+## Naam hi kaafi hai (Name is enough)
 
-## ✨ Características Principales
+### An Ecommerce website for electronics
 
-### 🔐 Sistema de Autenticación
+  <hr />
 
-- Registro e inicio de sesión seguro
-- Autenticación JWT con refresh tokens automáticos
-- Protección de rutas y datos personales
+</div>
 
-### 🏥 Servicios Veterinarios
+## **How to install and run locally ?**
 
-- Catálogo completo de servicios (Veterinaria y Estética)
-- Información detallada de cada servicio
-- Categorización por especialidades
-
-### 🐕 Gestión de Mascotas
-
-- Registro completo de mascotas con información detallada
-- Subida de imágenes para cada mascota
-- Categorización por especie, raza, edad y sexo
-- Edición y eliminación de registros
-
-### 📅 Sistema de Citas
-
-- Agendamiento inteligente de citas veterinarias
-- Selección de servicios especializados
-- Gestión de horarios disponibles
-- Historial completo de citas
-
-### 📱 Diseño Responsivo
-
-- Interfaz adaptada para móviles, tablets y desktop
-- Componentes optimizados con Sheet/Dialog según el dispositivo
-- Experiencia de usuario consistente en todas las pantallas
-
-## 🛠️ Tecnologías Utilizadas
-
-### Frontend
-
-- **React 19** - Biblioteca principal
-- **Vite** - Herramienta de construcción y desarrollo
-- **React Router DOM** - Navegación entre páginas
-- **Tailwind CSS** - Framework de estilos
-- **shadcn/ui** - Componentes accesibles
-- **Lucide React** - Iconografía
-- **dicebear** - Generador de avatares programático (avatars para mascotas/usuarios)
-- **tanstack-react-table** - Tablas y data-grid
-- **unpic-react** - Optimización y carga de imágenes
-- **react-day-picker** - Selector de fechas
-- **ESLint** - Linter y reglas del proyecto
-
-### Gestión de Estado
-
-- **React Context API** - Estado global de la aplicación
-- **React Hook Form** - Manejo de formularios
-- **Zod** - Validación de esquemas
-
-### HTTP y Datos
-
-- **Axios** - Cliente HTTP
-- **js-cookie** - Gestión de cookies
-- **date-fns** - Manipulación de fechas
-
-### UI/UX
-
-- **Sonner** - Notificaciones toast
-- **Vaul** - Drawer components para móviles
-- **Next Themes** - Soporte para tema claro/oscuro
-
-## 📁 Estructura del Proyecto
-
-```txt
-src/
-├── app/                   # Configuración principal de la aplicación
-├── components/            # Componentes reutilizables
-│   ├── ui/                # Componentes base de UI
-│   ├── appointments/      # Componentes de citas
-│   ├── pets/              # Componentes de mascotas
-│   ├── header/            # Navegación y header
-│   ├── home/              # Componentes de la página principal
-│   └── loaders/           # Componentes de carga
-├── contexts/              # Contextos de React (estado global)
-├── hooks/                 # Custom hooks
-├── lib/                   # Utilidades y configuraciones
-├── schemas/               # Esquemas de validación Zod
-├── services/              # Servicios de API
-├── styles/                # Estilos globales
-└── views/                 # Páginas principales
+```
+$ git clone https://github.com/swastikpatro/gada-electronics-ecommerce.git
+$ cd gada-electronics-ecommerce/
+$ npm install
+$ npm start
 ```
 
-## 🚀 Instalación y Configuración
+## **Live Link :**
 
-### Prerrequisitos
+[The Gada Electronics](https://gada-electronics-ecommerce.vercel.app/)
 
-- Node.js 18+
-- pnpm (recomendado) o npm
+## **DEMO**
 
-### Instalación
+<a href="https://www.awesomescreenshot.com/video/20639625">
+    <p>Gadda Electronics App 📱 - Watch Video</p>
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/322cc01c9fed4c06ba42541fb8675ad0-1686135559450-with-play.gif">
+  </a>
 
-1. **Clona el repositorio**
+## **Features -**
 
-   ```bash
-   git clone https://github.com/omancillav/vet-sync-app.git
-   cd vet-sync-app
-   ```
+▶ Features:
 
-2. **Instala las dependencias**
+1. Error Page 💀
+1. Easter Egg on the footer of the app (Includes Music) 😉
+1. Authentication:
+   1. User Signup
+   1. User Login
+1. Home page
+1. Product listing page
+1. Pagination on Product listing page
+1. Filter and sort products functionalities with Shimmer UI (Debounced)
+1. Highly Optimized Search product functionality with Suggestions (Debounced). 
+    1. These Suggestions are LRU Cached and older cached responses are deleted once reached the cache limit (50 responses). 
+    1. Also clicking the 🔍 button or pressing the Enter key, the Search even handles the "filter by product name" in product listing page.
+1. Individual product page
+1. 🛒 Cart Managment with selection of colors for a product. 
+1. ❤ Wishlist managment with selection of colors for a product.
+1. Address management (with 'No two addresses can be edited at once')
+1. Coupon Code Management
+1. Checkout page
+1. 💲 Payment Gateway Integration 
+1. Fully Responsive
 
-   ```bash
-   pnpm install
-   # o
-   npm install
-   ```
+## **Built with -**
 
-3. **Configura las variables de entorno**
+- React JS
+- React Context API + useReducer
+- React Router v6
+- CSS Modules
+- Mockbee as mockbackend
+- React Icons
+- Razorpay payment gateway
 
-   Crea un archivo `.env` en la raíz del proyecto:
+## **Screenshots :**
 
-   ```env
-   VITE_API_BASE_URL=tu_url_del_backend
-   VITE_API_KEY=tu_api_key
-   ```
+### Error Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/0fd0c9a1-574a-4aef-bfe7-b59bc8ca0536)
 
-4. **Inicia el servidor de desarrollo**
+### Home Page
+![Gada Electronics-home](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/b7ba9291-4afa-4629-a576-bcac41900cf4)
 
-   ```bash
-   pnpm dev
-   # o
-   npm run dev
-   ```
+### Product Listing Page (DESKTOP)
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/c7423acb-db46-498b-85f3-e5d3e5d1a725)
 
-5. **Abre tu navegador**
+### Product Listing Page (MOBILE)
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/ce97605a-c25b-47ae-8df2-9961168e8318)
 
-   Ve a [http://localhost:5173](http://localhost:5173)
+### Cart Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/3d6c755c-808f-457a-92b2-cb2f4aa9b939)
 
-## 📊 Scripts Disponibles
+### Wishlist Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/46f21440-c25d-498b-bc03-f906e0f26859)
 
-```bash
-# Desarrollo
-pnpm dev              # Inicia el servidor de desarrollo
+### Profile Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/db3dee7c-9313-4328-abde-f84f68e1f78e)
 
-# Construcción
-pnpm build           # Construye la aplicación para producción
+### Address Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/38c423cd-760f-47c5-b16b-d1831ffd63ff)
 
-# Linting
-pnpm lint            # Ejecuta ESLint
-pnpm lint:fix        # Corrige automáticamente los problemas de ESLint
+### Checkout Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/fa192bcc-1dbd-47ee-aa82-0f708bb6d0d5)
 
-# Vista previa
-pnpm preview         # Vista previa de la construcción de producción
-```
+### Login Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/e61ec27f-0f7e-4da3-aa3e-3d09f10b0d5a)
 
-## 🎨 Características de UI/UX
-
-- **Tema Claro/Oscuro**: Soporte completo para ambos temas
-- **Componentes Accesibles**: Construidos con shadcn/ui
-- **Animaciones Fluidas**: Transiciones suaves y feedback visual
-- **Formularios Inteligentes**: Validación en tiempo real
-- **Notificaciones**: Sistema de toast para feedback del usuario
-- **Carga Optimizada**: Skeletons y estados de carga elegantes
-
-## 🔒 Seguridad
-
-- Autenticación JWT con refresh tokens
-- Cookies seguras con flags `secure` y `sameSite`
-- Validación de datos con Zod
-- Interceptores de Axios para manejo automático de tokens
-- Rutas protegidas por autenticación
-
-## 📱 Responsive Design
-
-La aplicación está optimizada para diferentes dispositivos:
-
-- **Mobile First**: Diseño pensado primero para móviles
-- **Breakpoints Adaptativos**: sm, md, lg, xl
-- **Componentes Dinámicos**: Sheet en móvil, Dialog en desktop
-- **Touch Friendly**: Controles optimizados para touch
-
-## ☁️ Despliegue (Vercel)
-
-El proyecto está preparado para desplegarse en **Vercel**. Se incluye un archivo `vercel.json` que redirige todo el tráfico a `index.html`, útil para aplicaciones SPA con routing del cliente:
-
-```json
-{
-  "rewrites": [
-    { "source": "\\/(.*)", "destination": "/index.html" }
-  ]
-}
-```
-
-Puntos clave y pasos para desplegar:
-
-- Configuración de build en Vercel:
-  - Framework: Selecciona "Other" o "Vite" si aparece.
-  - Build Command: `pnpm build` (o `npm run build`)
-  - Output Directory: `dist`
-
-- Variables de entorno recomendadas (ajusta según tu backend):
-  - `VITE_API_BASE_URL` - URL base del backend
-  - `VITE_API_KEY` - API key (si aplica)
-  - `NODE_ENV` - `production`s
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Para contribuir:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 👨‍💻 Autor
-
-### omancilla
-
-- GitHub: [@omancillav](https://github.com/omancillav)
-
----
-
-⭐ ¡No olvides darle una estrella al proyecto si te gustó!
+### Signup Page
+![image](https://github.com/swastikpatro/gada-electronics-ecommerce/assets/113245457/b10f3147-4cad-4feb-8e61-5245f4662c07)
